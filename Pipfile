@@ -11,6 +11,7 @@ spotipy = "*"
 pandas = "*"
 bs4 = "*"
 youtube-dl = "*"
+lxml = "*"
 
 [requires]
 python_version = "3.7"
