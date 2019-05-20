@@ -39,12 +39,12 @@ def get_spotify_playlists(playlists):
     df = pd.DataFrame()
     list_songs = []
     for playlist in playlists:
-        logger.debug("get_playlist_tracks")
+        logger.info("Processing spotify playlist %s", playlist)
         list_songs = get_playlist_tracks("spotify", playlist)
         for song in list_songs:
             artist = (str(song['track']['artists'][0]['name']))
             title = (str(song['track']['name']))
-            df = df.append({"title": artist + ' - ' + title}, ignore_index=True)
+            df = df.append({"title": artist + ' - ' + title, "playlist_id": playlist}, ignore_index=True)
     return df
 
 
@@ -59,14 +59,22 @@ def main():
     # options.headless = True
     # browser = webdriver.Firefox(options=options)
 
-    if not args.url and not args.file_name:
+    if not args.url and not args.file_name and not args.file_spotify_playlists:
         logger.error('No input. Use the -u or -f flag to input an url. Exiting.')
         exit()
-    elif args.url:
-        url = [x.strip() for x in args.url.split(',')]
+    elif args.url or args.file_spotify_playlists:
+        if args.url:
+            urls = [x.strip() for x in args.url.split(',')]
+        if args.file_spotify_playlists:
+            with open(args.file_spotify_playlists) as f:
+                urls = [line.strip() for line in f]
         logger.debug("get_playlists")
-        df = get_spotify_playlists(url)
-        df.to_csv(export_folder + '/export_full.csv', index=False, sep='\t')
+        df = get_spotify_playlists(urls)
+        logger.debug("Exporting spotify playlists to export_spotify_track_names.csv")
+        df.to_csv(export_folder + '/export_spotify_track_names.csv', index=False, sep='\t')
+        if args.no_search_youtube:
+            logger.info("no_search_youtube mode. Exiting")
+            exit()
     else:
         df = pd.read_csv(args.file_name, sep='\t')
 
@@ -143,9 +151,11 @@ def parse_args():
     parser.add_argument('--debug', help="Display debugging information", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
     parser.add_argument('-u', '--url', type=str, help="Url of the spotify playlists (separated by comma)")
     parser.add_argument('-f', '--file_name', type=str, help="File containing the name of the songs (one by line, format Title - Artist)")
+    parser.add_argument('-s', '--file_spotify_playlists', type=str, help="File containing the links of the spotify playlists (one by line)")
     parser.add_argument('-v', '--download_video', help="Download the videos of the tracks found", dest='download_video', action='store_true')
     parser.add_argument('-a', '--download_audio', help="Download the audio files of the tracks found", dest='download_audio', action='store_true')
-    parser.set_defaults(download_video=False, download_audio=False)
+    parser.add_argument('--no_search_youtube', help="Doesn't search youtube urls. Use it with the -u or the -s flag if you want to export only the track names from spotify playlists", dest='no_search_youtube', action='store_true')
+    parser.set_defaults(download_video=False, download_audio=False, no_search_youtube=False)
     args = parser.parse_args()
 
     logging.basicConfig(level=args.loglevel)
