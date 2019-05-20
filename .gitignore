@@ -1,0 +1,8 @@
+.venv/
+Audio_export/
+Exports/
+Lists/
+Video_export/
+config.ini
+geckodriver.log
+tags
