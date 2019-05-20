@@ -1,13 +1,13 @@
 # spotify2youtube
 
-Script allowing the conversion of spotify playlists to youtube url list, audio files or video files.
+Script allowing the conversion of spotify playlists to a youtube url list, and export it to audio files or video files.
 
-It can also take as input a list of text to search (see below for an example) :
+It can also take as input a list of text to search (see below for an example).
 
 
 ## Requirements
 
-- config.ini (see config_sample.ini for an example)
+- valid config.ini (see config_sample.ini for an example)
 
 ## Installation of the virtualenv
 
@@ -42,13 +42,13 @@ artist1 - title2
 artist2 - title1
 ```
 
-Download the audio for the tracks in the sample csv file above :
+Download the audio files for the tracks in the sample csv file above :
 
 ```
 pipenv run python spotify2youtube.py -f sample_file.csv -a
 ```
 
-Download the video for the tracks in the sample csv file above :
+Download the video files for the tracks in the sample csv file above :
 
 ```
 pipenv run python spotify2youtube.py -f sample_file.csv -v
