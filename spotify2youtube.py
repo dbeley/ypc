@@ -62,13 +62,12 @@ def main():
     if not args.url and not args.file_name:
         logger.error('No input. Use the -u or -f flag to input an url. Exiting.')
         exit()
-    if not args.file_name:
-        url = args.url.split(',')
+    elif args.url:
+        url = [x.strip() for x in args.url.split(',')]
         logger.debug("get_playlists")
         df = get_spotify_playlists(url)
         df.to_csv(export_folder + '/export_full.csv', index=False, sep='\t')
     else:
-        # Path(file_name)
         df = pd.read_csv(args.file_name, sep='\t')
 
     list_urls = []
@@ -142,8 +141,8 @@ def main():
 def parse_args():
     parser = argparse.ArgumentParser(description='Convert spotify playlist to youtube urls')
     parser.add_argument('--debug', help="Display debugging information", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
-    parser.add_argument('-u', '--url', type=str, help="Url of the spotify playlist")
-    parser.add_argument('-f', '--file_name', type=str, help="File containing the name of the song (format Title - Artist)")
+    parser.add_argument('-u', '--url', type=str, help="Url of the spotify playlists (separated by comma)")
+    parser.add_argument('-f', '--file_name', type=str, help="File containing the name of the songs (one by line, format Title - Artist)")
     parser.add_argument('-v', '--download_video', help="Download the videos of the tracks found", dest='download_video', action='store_true')
     parser.add_argument('-a', '--download_audio', help="Download the audio files of the tracks found", dest='download_audio', action='store_true')
     parser.set_defaults(download_video=False, download_audio=False)
