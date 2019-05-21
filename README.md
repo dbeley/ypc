@@ -1,14 +1,16 @@
 # ypc : youtube_playlist_converter
 
-This script allows the conversion of spotify/deezer/text playlists to youtube urls or audio/video files.
+This python utility allows the conversion of spotify/deezer/text playlists to youtube urls or audio/video files.
 
 It supports spotify and deezer playlist urls, as well as a list of text to search (see below for an example).
 
 If you want to extract spotify playlists, you need to set up a valid config.ini file with your spotify api client id and secret and place it in ~/.config/ypc/.
 
-## Requirements
+## Installation
 
-- valid config.ini for spotify in ~/.config/ypc/ (see config_sample.ini for an example)
+```
+pip install ypc
+```
 
 ## Installation in a virtualenv
 
@@ -20,8 +22,10 @@ pipenv install '-e .'
 
 ### Help
 
+Use ypc with the -h flag to see all the available options :
+
 ```
-pipenv run ypc -h
+ypc -h
 ```
 
 ### Example
@@ -31,7 +35,7 @@ pipenv run ypc -h
 Download the audio of a spotify playlist :
 
 ```
-pipenv run ypc -su SPOTIFY_PLAYLIST_URL -a
+ypc -su SPOTIFY_PLAYLIST_URL -a
 ```
 
 #### With a deezer url
@@ -39,7 +43,7 @@ pipenv run ypc -su SPOTIFY_PLAYLIST_URL -a
 Download the video founds on youtube for a list of deezer playlists (one by line) :
 
 ```
-pipenv run ypc -fd deezer_list_playlists.txt -v
+ypc -fd deezer_list_playlists.txt -v
 ```
 
 #### With a csv file
@@ -56,11 +60,11 @@ any search term
 Download the audio files for the tracks/search terms in the sample csv file above :
 
 ```
-pipenv run ypc -f sample_file.csv -a
+ypc -f sample_file.csv -a
 ```
 
 Download the video files for the tracks/search terms in the sample csv file above :
 
 ```
-pipenv run ypc -f sample_file.csv -v
+ypc -f sample_file.csv -v
 ```
