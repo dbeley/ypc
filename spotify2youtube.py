@@ -132,7 +132,7 @@ def main():
         Path("Video_export").mkdir(parents=True, exist_ok=True)
         os.chdir("Video_export")
         for index, row in df.iterrows():
-            logger.debug("Downloading %s : %s", row['title'], row['url'])
+            logger.info("Downloading video for %s : %s", row['title'], row['url'])
             downloading_video(row['url'])
         os.chdir(original_folder)
     if args.download_audio:
@@ -140,7 +140,7 @@ def main():
         Path("Audio_export").mkdir(parents=True, exist_ok=True)
         os.chdir("Audio_export")
         for index, row in df.iterrows():
-            logger.debug("Downloading %s : %s (only audio)", row['title'], row['url'])
+            logger.info("Downloading audio for %s : %s", row['title'], row['url'])
             downloading_video(row['url'], only_audio=True)
         os.chdir(original_folder)
     logger.info("Runtime : %.2f seconds" % (time.time() - temps_debut))
@@ -150,7 +150,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Convert spotify playlist to youtube urls')
     parser.add_argument('--debug', help="Display debugging information", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
     parser.add_argument('-u', '--url', type=str, help="Url of the spotify playlists (separated by comma)")
-    parser.add_argument('-f', '--file_name', type=str, help="File containing the name of the songs (one by line, format Title - Artist)")
+    parser.add_argument('-f', '--file_name', type=str, help="File containing the name of the songs (one search term by line)")
     parser.add_argument('-s', '--file_spotify_playlists', type=str, help="File containing the links of the spotify playlists (one by line)")
     parser.add_argument('-v', '--download_video', help="Download the videos of the tracks found", dest='download_video', action='store_true')
     parser.add_argument('-a', '--download_audio', help="Download the audio files of the tracks found", dest='download_audio', action='store_true')

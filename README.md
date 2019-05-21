@@ -40,15 +40,16 @@ title
 artist1 - title1
 artist1 - title2
 artist2 - title1
+any search term
 ```
 
-Download the audio files for the tracks in the sample csv file above :
+Download the audio files for the tracks/search terms in the sample csv file above :
 
 ```
 pipenv run python spotify2youtube.py -f sample_file.csv -a
 ```
 
-Download the video files for the tracks in the sample csv file above :
+Download the video files for the tracks/search terms in the sample csv file above :
 
 ```
 pipenv run python spotify2youtube.py -f sample_file.csv -v
