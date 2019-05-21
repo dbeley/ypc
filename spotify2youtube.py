@@ -44,9 +44,6 @@ def get_spotify_playlists(playlists):
     for playlist in playlists:
         logger.info("Processing spotify playlist %s", playlist)
         list_songs = get_playlist_tracks("spotify", playlist)
-        # with open("list_songs.csv", 'w') as f:
-        #     for i in list_songs:
-        #         f.write(i + '\n')
         for song in list_songs:
             artist = (str(song['track']['artists'][0]['name']))
             title = (str(song['track']['name']))
@@ -84,7 +81,7 @@ def main():
             logger.info("no_search_youtube mode. Exiting")
             exit()
     else:
-        df = pd.read_csv(args.file_name, sep='\t')
+        df = pd.read_csv(args.file_name, sep='\t', header=None)
 
     # Extracting youtube urls
     list_urls = []
@@ -92,8 +89,8 @@ def main():
     session = requests.Session()
     session.headers.update = header
     for index, row in df.iterrows():
-        logger.info("Extracting youtube url for %s", row['title'])
-        url = "https://www.youtube.com/results?search_query=" + row['title'].replace(' ', '+')
+        logger.info("Extracting youtube url for %s", row[0])
+        url = "https://www.youtube.com/results?search_query=" + row[0].replace(' ', '+')
         logger.debug(url)
         html = session.get(url).content
         soup = BeautifulSoup(html, 'lxml')
@@ -125,7 +122,7 @@ def main():
         Path(export_folder + "/Video").mkdir(parents=True, exist_ok=True)
         os.chdir(export_folder + "/Video")
         for index, row in df.iterrows():
-            logger.info("Downloading video for %s : %s", row['title'], row['url'])
+            logger.info("Downloading video for %s : %s", row[0], row['url'])
             downloading_video(row['url'])
         os.chdir(original_folder)
     # Audio download
@@ -134,7 +131,7 @@ def main():
         Path(export_folder + "/Audio").mkdir(parents=True, exist_ok=True)
         os.chdir(export_folder + "/Audio")
         for index, row in df.iterrows():
-            logger.info("Downloading audio for %s : %s", row['title'], row['url'])
+            logger.info("Downloading audio for %s : %s", row[0], row['url'])
             downloading_video(row['url'], only_audio=True)
         os.chdir(original_folder)
     logger.info("Runtime : %.2f seconds" % (time.time() - temps_debut))
@@ -145,7 +142,7 @@ def parse_args():
     parser.add_argument('--debug', help="Display debugging information", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
     parser.add_argument('-u', '--url', type=str, help="Url of the spotify playlists (separated by comma)")
     parser.add_argument('-f', '--file_name', type=str, help="File containing the name of the songs (one search term by line)")
-    parser.add_argument('-s', '--file_spotify_playlists', type=str, help="File containing the links of the spotify playlists (one by line, with 'title' as header. See example in README.md)")
+    parser.add_argument('-s', '--file_spotify_playlists', type=str, help="File containing the links of the spotify playlists (one by line)")
     parser.add_argument('-n', '--export_folder_name', type=str, help="Name of the export. Used to name the exports folder")
     parser.add_argument('-v', '--download_video', help="Download the videos of the tracks found", dest='download_video', action='store_true')
     parser.add_argument('-a', '--download_audio', help="Download the audio files of the tracks found", dest='download_audio', action='store_true')

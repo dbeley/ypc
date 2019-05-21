@@ -33,10 +33,9 @@ pipenv run python spotify2youtube.py -u SPOTIFY_PLAYLIST_URL
 
 #### With a csv file
 
-Given a file sample_file.csv (the 'title' is mandatory) :
+Given a file sample_file.csv :
 
 ```
-title
 artist1 - title1
 artist1 - title2
 artist2 - title1
