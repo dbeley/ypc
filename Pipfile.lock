@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "43912f36a26f6143086bf4cd78c1a368d750ad587f9c72c137e13f70e1a6cbc9"
+            "sha256": "abf258d1a2dbad6fd5e56a22a68ed92988ab9d4ff233e8cf859bccccce8d99df"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -44,6 +44,10 @@
                 "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
             ],
             "version": "==3.0.4"
+        },
+        "e1839a8": {
+            "editable": true,
+            "path": "."
         },
         "idna": {
             "hashes": [
@@ -190,11 +194,15 @@
         },
         "youtube-dl": {
             "hashes": [
-                "sha256:4b34f9da88a5ba1e4fb3cbf296b13252bc61e3f14ce25bcd8dc90a8bfa55dadd",
-                "sha256:fe71aa725dc0f86deacdcc91f38492317d53b0ca8ec0f8bddc9961c205b4fea4"
+                "sha256:9f0724b15db26b14bc847830bc3affbc408d73f40e3e7e71c29f410627355f56",
+                "sha256:f73babe4bbad1c1eab3b4d74042ed8204cd62820e8489db74d3087ff9a6575df"
             ],
             "index": "pypi",
-            "version": "==2019.5.11"
+            "version": "==2019.5.20"
+        },
+        "youtube-playlist-converter": {
+            "editable": true,
+            "path": "."
         }
     },
     "develop": {}
