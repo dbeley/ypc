@@ -44,9 +44,9 @@ def get_spotify_playlists(playlists):
     for playlist in playlists:
         logger.info("Processing spotify playlist %s", playlist)
         list_songs = get_playlist_tracks("spotify", playlist)
-        with open("list_songs.csv", 'w') as f:
-            for i in list_songs:
-                f.write(i + '\n')
+        # with open("list_songs.csv", 'w') as f:
+        #     for i in list_songs:
+        #         f.write(i + '\n')
         for song in list_songs:
             artist = (str(song['track']['artists'][0]['name']))
             title = (str(song['track']['name']))
