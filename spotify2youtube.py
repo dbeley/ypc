@@ -101,6 +101,8 @@ def main():
         try:
             titles = soup.find_all('a', {'class': 'yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link'})
             href = [x['href'] for x in titles if x['href']]
+            # delete user channels url
+            href = [x for x in href if 'channel' not in x and 'user' not in x]
             logger.debug("href : %s", href)
             url = "https://www.youtube.com" + href[0]
             logger.debug(url)
@@ -143,7 +145,7 @@ def parse_args():
     parser.add_argument('--debug', help="Display debugging information", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
     parser.add_argument('-u', '--url', type=str, help="Url of the spotify playlists (separated by comma)")
     parser.add_argument('-f', '--file_name', type=str, help="File containing the name of the songs (one search term by line)")
-    parser.add_argument('-s', '--file_spotify_playlists', type=str, help="File containing the links of the spotify playlists (one by line)")
+    parser.add_argument('-s', '--file_spotify_playlists', type=str, help="File containing the links of the spotify playlists (one by line, with 'title' as header. See example in README.md)")
     parser.add_argument('-n', '--export_folder_name', type=str, help="Name of the export. Used to name the exports folder")
     parser.add_argument('-v', '--download_video', help="Download the videos of the tracks found", dest='download_video', action='store_true')
     parser.add_argument('-a', '--download_audio', help="Download the audio files of the tracks found", dest='download_audio', action='store_true')
