@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "abf258d1a2dbad6fd5e56a22a68ed92988ab9d4ff233e8cf859bccccce8d99df"
+            "sha256": "7d1dee952157fe4e1e654dfe75f17b95e9b5a96e4c22d5dee97ca1dcb1a3db71"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -199,10 +199,6 @@
             ],
             "index": "pypi",
             "version": "==2019.5.20"
-        },
-        "youtube-playlist-converter": {
-            "editable": true,
-            "path": "."
         }
     },
     "develop": {}

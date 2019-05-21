@@ -7,4 +7,4 @@ convert spotify/deezer/text playlists to youtube urls or audio/video files
 
 __version__ = "1.0"
 
-name = "youtube-playlist-converter"
+name = "ypc"

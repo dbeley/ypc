@@ -97,7 +97,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Convert spotify/deezer/text playlists to youtube urls or audio/video files')
     parser.add_argument('--debug', help="Display debugging information", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
     parser.add_argument('-f', '--file_name', type=str, help="File containing the name of the songs (one search term by line)")
-    parser.add_argument('-su', '--spotify_url', type=str, help="Url of the deezer playlists (separated by comma)")
+    parser.add_argument('-su', '--spotify_url', type=str, help="Url of the spotify playlists (separated by comma)")
     parser.add_argument('-du', '--deezer_url', type=str, help="Url of the deezer playlists (separated by comma)")
     parser.add_argument('-sf', '--spotify_file', type=str, help="File containing the links of the spotify playlists (one by line)")
     parser.add_argument('-df', '--deezer_file', type=str, help="File containing the links of the deezer playlists (one by line)")

@@ -1,6 +1,7 @@
 *.egg-info/
 .venv/
 Audio_export/
+dist/
 Exports/
 Lists/
 Video_export/

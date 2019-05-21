@@ -1,4 +1,4 @@
-# youtube_playlist_converter
+# ypc : youtube_playlist_converter
 
 This script allows the conversion of spotify/deezer/text playlists to youtube urls or audio/video files.
 
