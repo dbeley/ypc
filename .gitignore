@@ -1,10 +1,11 @@
 *.egg-info/
+*__pycache__/
 .venv/
 Audio_export/
-dist/
 Exports/
 Lists/
 Video_export/
 config.ini
+dist/
 geckodriver.log
 tags
