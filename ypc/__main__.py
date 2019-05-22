@@ -71,7 +71,7 @@ def main():
     logger.debug("Export folder : %s.", export_folder)
     Path(export_folder).mkdir(parents=True, exist_ok=True)
 
-    # Check main argument
+    # Parse main argument
     if args.main_argument:
         df = parse_main_argument(args.main_argument, export_folder)
     # Parse other arguments
@@ -80,7 +80,7 @@ def main():
         logger.error('No input. Use the -h flag to see help. Exiting.')
         exit()
 
-    # Spotify
+    # Spotify arguments
     elif args.spotify_url or args.spotify_file:
         sp = get_spotipy()
         if args.spotify_url:
@@ -93,7 +93,7 @@ def main():
         df = get_spotify_playlists(sp, urls)
         logger.debug("Exporting spotify playlists to export_spotify_track_names.csv.")
         df.to_csv(export_folder + '/export_spotify_track_names.csv', index=False, sep='\t')
-    # Deezer
+    # Deezer arguments
     elif args.deezer_url or args.deezer_file:
         if args.deezer_url:
             urls = [x.strip() for x in args.deezer_url.split(',')]
@@ -106,8 +106,11 @@ def main():
         logger.debug("Exporting deezer playlists to export_deezer_track_names.csv.")
         df.to_csv(export_folder + '/export_deezer_track_names.csv', index=False, sep='\t')
     # List of search terms
-    else:
+    elif args.file_name:
         df = pd.read_csv(args.file_name, sep='\t', header=None)
+    else:
+        logger.error("Unexpected error. Use -h to see available options.")
+        exit()
 
     if args.no_search_youtube:
         logger.info("no_search_youtube mode. Exiting.")
@@ -146,6 +149,7 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Convert spotify/deezer/text playlists to youtube urls or audio/video files.')
+    parser.add_argument("main_argument", type=str, help="Any search terms allowed : search terms or deezer/spotify playlists urls (separated by comma) or filename containing search terms or deezer/spotify playlists urls (one by line)")
     parser.add_argument('--debug', help="Display debugging information.", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
     parser.add_argument('-f', '--file_name', type=str, help="File containing the name of the songs (one search term by line).")
     parser.add_argument('-su', '--spotify_url', type=str, help="Url of the spotify playlists (separated by comma).")
@@ -155,8 +159,7 @@ def parse_args():
     parser.add_argument('-n', '--export_folder_name', type=str, help="Name of the export. Used to name the exports folder.")
     parser.add_argument('-v', '--download_video', help="Download the videos of the tracks found.", dest='download_video', action='store_true')
     parser.add_argument('-a', '--download_audio', help="Download the audio files of the tracks found.", dest='download_audio', action='store_true')
-    parser.add_argument('--no_search_youtube', help="Doesn't search youtube urls. Use it with the -u or the -s flag if you want to export only the track names from spotify playlists.", dest='no_search_youtube', action='store_true')
-    parser.add_argument("main_argument", type=str, help="Either search terms or deezer/spotify urls (separated by comma), or a file containing search terms or deezer/spotify urls (one by line)")
+    parser.add_argument('--no_search_youtube', help="Doesn't search youtube urls. Use it with the -su/-du/-sf/-df flags if you want to export only the track names from playlists.", dest='no_search_youtube', action='store_true')
     parser.set_defaults(download_video=False, download_audio=False, no_search_youtube=False)
     args = parser.parse_args()
 

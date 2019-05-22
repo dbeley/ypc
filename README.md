@@ -2,9 +2,11 @@
 
 This python utility allows the conversion of spotify/deezer/text playlists to youtube urls or audio/video files.
 
-It supports spotify and deezer playlist urls, as well as a list of text to search (see below for an example).
+It supports spotify and deezer playlist urls, as well as a list of terms to search (see below for some examples). 
 
-If you want to extract spotify playlists, you need to set up a valid config.ini file with your spotify api client id and secret (go to https://developer.spotify.com/dashboard/login to create your own spotify application) in the ~/.config/ypc/ directory (see the config_sample.ini file as an example).
+It also supports files containing a list of spotify and deezer playlist urls or a list of terms to search (one by line). Unfortunately, a mix of several type is not supported at this moment (spotify and deezer playlists urls in the same file for example).
+
+If you want to extract spotify playlists, you need to set up a valid config.ini file with your spotify api client id and secret (go to https://developer.spotify.com/dashboard/login to create your own spotify application) and place it in the ~/.config/ypc/ directory (see the config_sample.ini file as an example).
 
 ## Installation
 
@@ -15,6 +17,8 @@ pip install ypc
 ## Installation in a virtualenv
 
 ```
+git clone https://github.com/dbeley/ypc
+cd ypc
 pipenv install '-e .'
 ```
 
@@ -32,21 +36,27 @@ ypc -h
 
 #### Simple Examples
 
-Download audio for several songs
+Download audio files for several songs :
 
 ```
 ypc "u2 one,xtc general and majors,debussy la mer" -a
 ```
 
-Download video for a spotify playlist using the name "spotify_export" as export folder
+Download videos for several deezer playlists using the name "deezer_export" as export folder :
 
 ```
-ypc SPOTIFY_PLAYLIST_URL -v -n spotify_export
+ypc DEEZER_PLAYLIST_URL1,DEEZER_PLAYLIST_URL2 -v -n deezer_export
+```
+
+Download audio and video for each spotify playlists in the file spotify_playlists.txt (one by line) using the name "spotify_export" as export folder :
+
+```
+ypc spotify_playlists.txt -a -v -n spotify_export
 ```
 
 The main ypc arguments you want are -a (download audio), -v (download video) and -n (set the name of the export folder).
 
-You can set the medias to download (an url, a list of search terms, a file containing spotify playlist urls, etc.) without any argument and ypc will guess which kind of media it is, or use explicit argument, as shown in the examples below.
+You can set the medias (an url, a list of search terms, a file containing spotify playlist urls, etc.) to download without any argument and ypc will guess which kind of media it is, or use explicit argument, as shown in the examples below.
 
 #### With a spotify url
 
@@ -59,11 +69,11 @@ ypc -su SPOTIFY_PLAYLIST_URL -a
 
 #### With a deezer url
 
-Download the video founds on youtube for a list of deezer playlists (one by line) :
+Download the video founds on youtube from a file containing deezer playlists (one by line) :
 
 ```
 ypc deezer_list_playlists.txt -v
-ypc -fd deezer_list_playlists.txt -v
+ypc -df deezer_list_playlists.txt -v
 ```
 
 #### With a csv file
