@@ -4,12 +4,14 @@ import os
 import time
 import pandas as pd
 from pathlib import Path
+from tqdm import tqdm
 from .download_video import downloading_video
-from .spotify_playlist import get_spotify_playlists
+from .spotify_playlist import get_spotipy, get_spotify_playlists
 from .deezer_playlist import get_deezer_playlists
 from .youtube_extract import youtube_extract_urls
 
 logger = logging.getLogger()
+FORMAT = '%(levelname)s :: %(message)s'
 temps_debut = time.time()
 
 
@@ -21,7 +23,7 @@ def main():
         export_folder = args.export_folder_name
     else:
         export_folder = "Exports"
-    logger.debug("Export folder : %s", export_folder)
+    logger.debug("Export folder : %s.", export_folder)
     Path(export_folder).mkdir(parents=True, exist_ok=True)
 
     # Check input
@@ -32,15 +34,16 @@ def main():
 
     # Spotify
     elif args.spotify_url or args.spotify_file:
+        sp = get_spotipy()
         if args.spotify_url:
             urls = [x.strip() for x in args.spotify_url.split(',')]
         if args.spotify_file:
             with open(args.spotify_file) as f:
                 urls = [line.strip() for line in f]
-        logger.debug("urls : %s", urls)
-        logger.debug("get_spotify_playlists")
-        df = get_spotify_playlists(urls)
-        logger.debug("Exporting spotify playlists to export_spotify_track_names.csv")
+        logger.debug("urls : %s.", urls)
+        logger.debug("Function get_spotify_playlists.")
+        df = get_spotify_playlists(sp, urls)
+        logger.debug("Exporting spotify playlists to export_spotify_track_names.csv.")
         df.to_csv(export_folder + '/export_spotify_track_names.csv', index=False, sep='\t')
     # Deezer
     elif args.deezer_url or args.deezer_file:
@@ -49,21 +52,21 @@ def main():
         if args.deezer_file:
             with open(args.deezer_file) as f:
                 urls = [line.strip() for line in f]
-        logger.debug("urls : %s", urls)
-        logger.debug("get_deezer_playlists")
+        logger.debug("urls : %s.", urls)
+        logger.debug("Function get_deezer_playlists.")
         df = get_deezer_playlists(urls)
-        logger.debug("Exporting deezer playlists to export_deezer_track_names.csv")
+        logger.debug("Exporting deezer playlists to export_deezer_track_names.csv.")
         df.to_csv(export_folder + '/export_deezer_track_names.csv', index=False, sep='\t')
     # List of search terms
     else:
         df = pd.read_csv(args.file_name, sep='\t', header=None)
 
     if args.no_search_youtube:
-        logger.info("no_search_youtube mode. Exiting")
+        logger.info("no_search_youtube mode. Exiting.")
         exit()
     list_urls = youtube_extract_urls(df)
 
-    logger.info("Exporting urls list")
+    logger.info("Exporting urls list.")
     with open(export_folder + '/url_list_simple.csv', 'w') as f:
         for i in list_urls:
             f.write(f"{i}\n")
@@ -74,23 +77,23 @@ def main():
     original_folder = os.getcwd()
     # Video download
     if args.download_video:
-        logger.info("Downloading videos")
         Path(export_folder + "/Video").mkdir(parents=True, exist_ok=True)
         os.chdir(export_folder + "/Video")
-        for index, row in df.iterrows():
-            logger.info("Downloading video for %s : %s", row[0], row['url'])
+        logger.info("Downloading videos.")
+        for index, row in tqdm(df.iterrows(), dynamic_ncols=True, total=df.shape[0]):
+            logger.debug("Downloading video for %s : %s.", row[0], row['url'])
             downloading_video(row['url'])
         os.chdir(original_folder)
     # Audio download
     if args.download_audio:
-        logger.info("Downloading audio files")
         Path(export_folder + "/Audio").mkdir(parents=True, exist_ok=True)
         os.chdir(export_folder + "/Audio")
-        for index, row in df.iterrows():
-            logger.info("Downloading audio for %s : %s", row[0], row['url'])
+        logger.info("Downloading audio files.")
+        for index, row in tqdm(df.iterrows(), dynamic_ncols=True, total=df.shape[0]):
+            logger.debug("Downloading audio for %s : %s.", row[0], row['url'])
             downloading_video(row['url'], only_audio=True)
         os.chdir(original_folder)
-    logger.info("Runtime : %.2f seconds" % (time.time() - temps_debut))
+    logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
 
 def parse_args():
@@ -108,7 +111,7 @@ def parse_args():
     parser.set_defaults(download_video=False, download_audio=False, no_search_youtube=False)
     args = parser.parse_args()
 
-    logging.basicConfig(level=args.loglevel)
+    logging.basicConfig(level=args.loglevel, format=FORMAT)
     return args
 
 
