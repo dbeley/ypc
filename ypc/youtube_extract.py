@@ -22,7 +22,7 @@ def youtube_extract_urls(df):
         # with open('soup.html', 'w') as f:
         #     f.write(soup.prettify())
         # Test if youtube is rate-limited
-        if soup.select('form', {'id': 'captcha-form'}):
+        if soup.find('form', {'id': 'captcha-form'}):
             logger.error("Rate-limit detected on Youtube. Exiting.")
             exit()
         try:
