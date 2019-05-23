@@ -4,7 +4,7 @@ This python utility allows the conversion of spotify/deezer/text playlists to yo
 
 It supports spotify and deezer playlist urls, as well as a list of terms to search (see below for some examples). 
 
-It also supports files containing a list of spotify and deezer playlist urls or a list of terms to search (one by line). Unfortunately, a mix of several type is not supported at this moment (spotify and deezer playlists urls in the same file for example).
+It also supports files containing spotify or deezer playlist urls or terms to search (one by line). Unfortunately, the mix of several types is not supported at this moment (spotify and deezer playlists urls in the same file for example).
 
 If you want to extract spotify playlists, you need to set up a valid config.ini file with your spotify api client id and secret (go to https://developer.spotify.com/dashboard/login to create your own spotify application) and place it in the ~/.config/ypc/ directory (see the config_sample.ini file as an example).
 
@@ -67,7 +67,21 @@ ypc SPOTIFY_PLAYLIST_URL -a
 ypc -su SPOTIFY_PLAYLIST_URL -a
 ```
 
+Download the video founds on youtube from a file containing spotify playlists (one by line) :
+
+```
+ypc spotify_list_playlists.txt -v
+ypc -sf spotify_list_playlists.txt -v
+```
+
 #### With a deezer url
+
+Download videos for several deezer playlists using the name "deezer_export" as export folder :
+
+```
+ypc DEEZER_PLAYLIST_URL1,DEEZER_PLAYLIST_URL2 -v -n deezer_export
+ypc -du DEEZER_PLAYLIST_URL1,DEEZER_PLAYLIST_URL2 -v -n deezer_export
+```
 
 Download the video founds on youtube from a file containing deezer playlists (one by line) :
 
@@ -76,7 +90,13 @@ ypc deezer_list_playlists.txt -v
 ypc -df deezer_list_playlists.txt -v
 ```
 
-#### With a csv file
+#### With search terms
+
+Download audio files for several songs (no explicit argument available) :
+
+```
+ypc "u2 one,xtc general and majors,debussy la mer" -a
+```
 
 Given a file sample_file.csv :
 
