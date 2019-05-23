@@ -31,5 +31,6 @@ setuptools.setup(
             'bs4',
             'youtube-dl',
             'lxml',
+            'tqdm',
             ]
         )
