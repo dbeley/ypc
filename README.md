@@ -14,6 +14,8 @@ If you want to extract spotify playlists, you need to set up a valid config.ini 
 pip install ypc
 ```
 
+If you are an Archlinux user, you can install the AUR package [ypc-git](https://aur.archlinux.org/packages/ypc-git).
+
 ## Installation in a virtualenv
 
 ```
