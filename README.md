@@ -8,6 +8,16 @@ It also supports files containing spotify or deezer playlist urls or terms to se
 
 If you want to extract spotify playlists, you need to set up a valid config.ini file with your spotify api client id and secret (go to https://developer.spotify.com/dashboard/login to create your own spotify application) and place it in the ~/.config/ypc/ directory (see the config_sample.ini file as an example).
 
+## Requirements
+
+- requests
+- spotipy
+- pandas
+- bs4
+- youtube-dl
+- lxml
+- tqdm
+
 ## Installation
 
 ```
@@ -28,10 +38,49 @@ pipenv install '-e .'
 
 ### Help
 
-Use ypc with the -h flag to see all the available options :
+Show the help :
 
 ```
 ypc -h
+```
+
+```
+usage: ypc [-h] [--debug] [-f FILE_NAME] [-su SPOTIFY_URL] [-du DEEZER_URL]
+           [-sf SPOTIFY_FILE] [-df DEEZER_FILE] [-n EXPORT_FOLDER_NAME] [-v]
+           [-a] [--no_search_youtube]
+           main_argument
+
+Convert spotify/deezer/text playlists to youtube urls or audio/video files.
+
+positional arguments:
+  main_argument         Any search terms allowed : search terms or
+                        deezer/spotify playlists urls (separated by comma) or
+                        filename containing search terms or deezer/spotify
+                        playlists urls (one by line)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --debug               Display debugging information.
+  -f FILE_NAME, --file_name FILE_NAME
+                        File containing the name of the songs (one search term
+                        by line).
+  -su SPOTIFY_URL, --spotify_url SPOTIFY_URL
+                        Url of the spotify playlists (separated by comma).
+  -du DEEZER_URL, --deezer_url DEEZER_URL
+                        Url of the deezer playlists (separated by comma).
+  -sf SPOTIFY_FILE, --spotify_file SPOTIFY_FILE
+                        File containing the links of the spotify playlists
+                        (one by line).
+  -df DEEZER_FILE, --deezer_file DEEZER_FILE
+                        File containing the links of the deezer playlists (one
+                        by line).
+  -n EXPORT_FOLDER_NAME, --export_folder_name EXPORT_FOLDER_NAME
+                        Name of the export. Used to name the exports folder.
+  -v, --download_video  Download the videos of the tracks found.
+  -a, --download_audio  Download the audio files of the tracks found.
+  --no_search_youtube   Doesn't search youtube urls. Use it with the
+                        -su/-du/-sf/-df flags if you want to export only the
+                        track names from playlists.
 ```
 
 ### Examples

@@ -17,15 +17,12 @@ class MyLogger(object):
 
 def downloading_video(url, only_audio=False):
     if only_audio:
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'logger': MyLogger(),
-            }
+        ydl_opts = {"format": "bestaudio/best", "logger": MyLogger()}
     else:
         ydl_opts = {
-            'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
-            'logger': MyLogger(),
-            }
+            "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
+            "logger": MyLogger(),
+        }
     with YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(url, download=True)
         filename = ydl.prepare_filename(info_dict)
