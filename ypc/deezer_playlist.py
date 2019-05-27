@@ -10,9 +10,11 @@ def get_deezer_playlist_tracks(playlist):
         f"https://api.deezer.com/playlist/{playlist.split('/')[-1]}/tracks"
     )
     list_res = []
+    logger.debug("Playlist api url : %s", playlist)
     res = requests.get(playlist).json()
     list_res.append(res)
     while "next" in res:
+        logger.debug("next tracks in playlist : %s", res["next"])
         res = requests.get(res["next"]).json()
         list_res.append(res)
         if "next" not in res:

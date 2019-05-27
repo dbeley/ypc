@@ -194,6 +194,7 @@ def parse_args():
     )
     parser.add_argument(
         "main_argument",
+        nargs="?",
         type=str,
         help="Any search terms allowed : search terms or deezer/spotify playlists urls (separated by comma) or filename containing search terms or deezer/spotify playlists urls (one by line)",
     )
