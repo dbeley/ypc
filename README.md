@@ -1,5 +1,7 @@
 # ypc : youtube_playlist_converter
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8007d6fb15334ef485aadd64e133aa97)](https://app.codacy.com/app/dbeley/ypc?utm_source=github.com&utm_medium=referral&utm_content=dbeley/ypc&utm_campaign=Badge_Grade_Dashboard)
+
 This python utility allows the conversion of spotify/deezer/text playlists to youtube urls or audio/video files.
 
 It supports spotify and deezer playlist urls, as well as a list of terms to search (see below for some examples). 
