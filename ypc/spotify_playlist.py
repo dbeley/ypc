@@ -14,7 +14,7 @@ def get_spotipy():
     try:
         config = configparser.ConfigParser()
         config.read(user_config_dir + "config.ini")
-        id = config["spotify"]["id"]
+        spotify_id = config["spotify"]["id"]
         secret = config["spotify"]["secret"]
     except Exception as e:
         logger.error(
@@ -41,7 +41,7 @@ def get_spotipy():
 
     # Spotify API
     client_credentials_manager = SpotifyClientCredentials(
-        client_id=id, client_secret=secret
+        client_id=spotify_id, client_secret=secret
     )
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
     return sp

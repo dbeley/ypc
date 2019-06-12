@@ -6,17 +6,17 @@ It supports spotify and deezer playlist urls, as well as a list of terms to sear
 
 It also supports files containing spotify or deezer playlist urls or terms to search (one by line). Unfortunately, the mix of several types is not supported at this moment (spotify and deezer playlists urls in the same file for example).
 
-If you want to extract spotify playlists, you need to set up a valid config.ini file with your spotify api client id and secret (go to https://developer.spotify.com/dashboard/login to create your own spotify application) and place it in the ~/.config/ypc/ directory (see the config_sample.ini file as an example).
+If you want to extract spotify playlists, you need to set up a valid config.ini file with your spotify api client id and secret (go to [developer.spotify.com/dashboard/login](https://developer.spotify.com/dashboard/login) to create your own spotify application) and place it in the ~/.config/ypc/ directory (see the config_sample.ini file as an example).
 
 ## Requirements
 
-- requests
-- spotipy
-- pandas
-- bs4
-- youtube-dl
-- lxml
-- tqdm
+    - requests
+    - spotipy
+    - pandas
+    - bs4
+    - youtube-dl
+    - lxml
+    - tqdm
 
 ## Installation
 

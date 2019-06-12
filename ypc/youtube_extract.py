@@ -22,11 +22,11 @@ def youtube_extract_urls(df):
         url = "https://www.youtube.com/results?search_query=" + row[0].replace(
             " ", "+"
         ).replace("&", "%26")
-        logger.debug("Extracting youtube url for %s at %s.", row[0], url)
+        logger.debug(
+            "%s : Extracting youtube url for %s at %s.", index, row[0], url
+        )
         html = session.get(url).content
         soup = BeautifulSoup(html, "lxml")
-        # with open('soup.html', 'w') as f:
-        #     f.write(soup.prettify())
         # Test if youtube is rate-limited
         if soup.find("form", {"id": "captcha-form"}):
             logger.error("Rate-limit detected on Youtube. Exiting.")

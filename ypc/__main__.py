@@ -171,7 +171,12 @@ def main():
         for index, row in tqdm(
             df.iterrows(), dynamic_ncols=True, total=df.shape[0]
         ):
-            logger.debug("Downloading video for %s : %s.", row[0], row["url"])
+            logger.debug(
+                "%s : Downloading video for %s : %s.",
+                index,
+                row[0],
+                row["url"],
+            )
             downloading_video(row["url"])
         os.chdir(original_folder)
     # Audio download
@@ -182,7 +187,12 @@ def main():
         for index, row in tqdm(
             df.iterrows(), dynamic_ncols=True, total=df.shape[0]
         ):
-            logger.debug("Downloading audio for %s : %s.", row[0], row["url"])
+            logger.debug(
+                "%s : Downloading audio for %s : %s.",
+                index,
+                row[0],
+                row["url"],
+            )
             downloading_video(row["url"], only_audio=True)
         os.chdir(original_folder)
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
