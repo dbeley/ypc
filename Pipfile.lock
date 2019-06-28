@@ -171,10 +171,10 @@
         },
         "soupsieve": {
             "hashes": [
-                "sha256:6898e82ecb03772a0d82bd0d0a10c0d6dcc342f77e0701d0ec4a8271be465ece",
-                "sha256:b20eff5e564529711544066d7dc0f7661df41232ae263619dede5059799cdfca"
+                "sha256:72b5f1aea9101cf720a36bb2327ede866fd6f1a07b1e87c92a1cc18113cbc946",
+                "sha256:e4e9c053d59795e440163733a7fec6c5972210e1790c507e4c7b051d6c5259de"
             ],
-            "version": "==1.9.1"
+            "version": "==1.9.2"
         },
         "spotipy": {
             "hashes": [
@@ -200,11 +200,11 @@
         },
         "youtube-dl": {
             "hashes": [
-                "sha256:6091e44d2f7ceb99c24b81204b9238681275706e95fcd40ad8b001e0ebd74787",
-                "sha256:93ca1ff30b99223318305cf4f30a02b8ea2cf5fdd2816f83d60aaa3c1bb19432"
+                "sha256:9ffbc02a0a150795f076b6a521fdfe2dad3f3305a8e3a0d29a720c551d4a9a44",
+                "sha256:b3017f654ab2120348eb92c6b39afc77ac05f88c845a2a91bd9122239afff86f"
             ],
             "index": "pypi",
-            "version": "==2019.6.8"
+            "version": "==2019.6.27"
         },
         "ypc": {
             "editable": true,
