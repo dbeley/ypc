@@ -200,11 +200,11 @@
         },
         "youtube-dl": {
             "hashes": [
-                "sha256:36da83abcde378d4de838d55d25b90c4a3ca37843efa20007898646df14b5575",
-                "sha256:829fc833d8cc4a24c883fa49fd450d06b29fb17cddcb885314af92da220234f1"
+                "sha256:0bba12de913c4aa31052faa3e21c641973554ab0ab1f6d45d5609598e08e5f7a",
+                "sha256:15e0dccdcda6157b0b4afac5397c167093555c463f135902f4cd627d5efceda7"
             ],
             "index": "pypi",
-            "version": "==2019.7.2"
+            "version": "==2019.7.12"
         },
         "ypc": {
             "editable": true,
