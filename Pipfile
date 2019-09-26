@@ -6,15 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-requests = "*"
-spotipy = "*"
-pandas = "*"
-bs4 = "*"
-youtube-dl = "*"
-lxml = "*"
-tqdm = "*"
 e1839a8 = {editable = true,path = "."}
-ypc = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"

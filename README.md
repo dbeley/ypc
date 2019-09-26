@@ -15,7 +15,7 @@ If you want to extract spotify playlists, you need to set up a valid config.ini 
 - requests
 - spotipy
 - pandas
-- bs4
+- beautifulsoup4
 - youtube-dl
 - lxml
 - tqdm

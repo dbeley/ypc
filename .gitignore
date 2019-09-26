@@ -9,3 +9,4 @@ config.ini
 dist/
 geckodriver.log
 tags
+build/

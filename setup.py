@@ -24,7 +24,7 @@ setuptools.setup(
         "requests",
         "spotipy",
         "pandas",
-        "bs4",
+        "beautifulsoup4",
         "youtube-dl",
         "lxml",
         "tqdm",
