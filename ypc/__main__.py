@@ -85,7 +85,7 @@ def main():
     if args.export_folder_name:
         export_folder = args.export_folder_name
     else:
-        export_folder = "Exports"
+        export_folder = "ypc_exports"
     logger.debug("Export folder : %s.", export_folder)
     Path(export_folder).mkdir(parents=True, exist_ok=True)
 
