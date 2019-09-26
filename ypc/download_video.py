@@ -17,7 +17,17 @@ class MyLogger(object):
 
 def downloading_video(url, only_audio=False):
     if only_audio:
-        ydl_opts = {"format": "bestaudio/best", "logger": MyLogger()}
+        ydl_opts = {
+            "format": "bestaudio/best",
+            "postprocessors": [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "320",
+                }
+            ],
+            "logger": MyLogger(),
+        }
     else:
         ydl_opts = {
             "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",

@@ -5,10 +5,10 @@ import time
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
-from .download_video import downloading_video
-from .spotify_playlist import get_spotipy, get_spotify_playlists
-from .deezer_playlist import get_deezer_playlists
-from .youtube_extract import youtube_extract_urls
+from ypc.download_video import downloading_video
+from ypc.spotify_playlist import get_spotipy, get_spotify_playlists
+from ypc.deezer_playlist import get_deezer_playlists
+from ypc.youtube_extract import youtube_extract_urls
 
 logger = logging.getLogger()
 FORMAT = "%(levelname)s :: %(message)s"
