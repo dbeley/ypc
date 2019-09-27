@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7a368e0d2f02ebfa6691823a3226aa1cae88c34fed5ba5a45d136a2de4caefa8"
+            "sha256": "c16917b1650c25714a820d4a71738a7cf46af6121998b3e2a012102cc081118b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -178,6 +178,10 @@
                 "sha256:d61dd64e81a4cc026726b25981faf8ef8453363598483d51f7dc6f6d5580a78f"
             ],
             "version": "==2019.9.12.1"
+        },
+        "ypc": {
+            "editable": true,
+            "path": "."
         }
     },
     "develop": {}

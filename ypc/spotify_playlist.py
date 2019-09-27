@@ -62,7 +62,9 @@ def get_spotify_playlists(sp, playlists):
     for playlist in playlists:
         logger.info("Processing spotify playlist %s", playlist)
         try:
-            list_songs = get_spotify_playlist_tracks(sp, "spotify", playlist)
+            list_songs = get_spotify_playlist_tracks(
+                sp, username=None, playlist_id=playlist
+            )
         except Exception as e:
             logger.error(
                 "Error when requesting Spotify API. Be sure that your config.ini file is correct. Error : %s",

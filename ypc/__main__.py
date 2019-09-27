@@ -272,6 +272,12 @@ def parse_args():
         dest="no_search_youtube",
         action="store_true",
     )
+    # parser.add_argument(
+    #     "--spotify_username",
+    #     help="Name of the spotify user owning the playlists to extract (default = spotify).",
+    #     dest="spotify_username",
+    #     default="spotify",
+    # )
     parser.set_defaults(
         download_video=False, download_audio=False, no_search_youtube=False
     )

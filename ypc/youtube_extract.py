@@ -11,7 +11,7 @@ def youtube_extract_urls(df):
     # Extracting youtube urls
     list_urls = []
     header = {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0"
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0"
     }
     session = requests.Session()
     session.headers.update = header
@@ -29,7 +29,9 @@ def youtube_extract_urls(df):
         soup = BeautifulSoup(html, "lxml")
         # Test if youtube is rate-limited
         if soup.find("form", {"id": "captcha-form"}):
-            logger.error("Rate-limit detected on Youtube. Exiting.")
+            logger.error(
+                "Rate-limit detected on Youtube. Exiting. Wait at east one hour before retrying."
+            )
             exit()
         try:
             titles = soup.find_all(
