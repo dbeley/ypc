@@ -8,7 +8,7 @@ from tqdm import tqdm
 from ypc.download_video import downloading_video
 from ypc.spotify_playlist import get_spotipy, get_spotify_playlists
 from ypc.deezer_playlist import get_deezer_playlists
-from ypc.youtube_extract import youtube_extract_urls
+from ypc.youtube_extract import youtube_extract_urls, get_youtube_url
 
 logger = logging.getLogger()
 FORMAT = "%(levelname)s :: %(message)s"
@@ -152,7 +152,8 @@ def main():
     if args.no_search_youtube:
         logger.info("no_search_youtube mode. Exiting.")
         exit()
-    list_urls = youtube_extract_urls(df)
+    # list_urls = youtube_extract_urls(df)
+    list_urls = [get_youtube_url(x["title"]) for index, x in df.iterrows()]
 
     logger.info("Exporting urls list.")
     with open(export_folder + "/url_list_simple.csv", "w") as f:
