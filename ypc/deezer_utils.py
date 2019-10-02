@@ -35,7 +35,6 @@ def get_deezer_playlists(playlists):
     df = pd.DataFrame()
     list_songs = []
     for playlist in playlists:
-        logger.info("Processing deezer playlist %s", playlist)
         list_songs = get_deezer_playlist_tracks(playlist)
         for song in list_songs:
             df = df.append(

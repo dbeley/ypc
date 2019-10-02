@@ -56,11 +56,11 @@ def get_spotify_playlist_tracks(sp, username, playlist_id):
     return tracks
 
 
-def get_spotify_playlists(sp, playlists):
+def get_spotify_playlists(playlists):
+    sp = get_spotipy()
     df = pd.DataFrame()
     list_songs = []
     for playlist in playlists:
-        logger.info("Processing spotify playlist %s", playlist)
         try:
             list_songs = get_spotify_playlist_tracks(
                 sp, username=None, playlist_id=playlist

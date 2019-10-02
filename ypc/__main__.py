@@ -5,17 +5,31 @@ import time
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
-from ypc.download_video import downloading_video
-from ypc.spotify_playlist import get_spotipy, get_spotify_playlists
-from ypc.deezer_playlist import get_deezer_playlists
-from ypc.youtube_extract import get_youtube_url
+
+from ypc.spotify_utils import get_spotify_playlists
+from ypc.deezer_utils import get_deezer_playlists
+from ypc.ydl_utils import ydl_download, ydl_get_url
 
 logger = logging.getLogger()
 FORMAT = "%(levelname)s :: %(message)s"
 temps_debut = time.time()
 
 
+def main_argument_is_youtube(argument):
+    """ True if main_argument is a youtube file."""
+    if os.path.isfile(argument):
+        argument_file_content = open(argument).read()
+        return (
+            "youtu" in argument_file_content
+            and argument_file_content.startswith("http")
+        )
+    else:
+        return False
+
+
 def parse_main_argument(argument, export_folder):
+    """Function parsing the main_argument argument.
+    Returns a dataframe containing the search terms (or the urls if main_argument is a youtube file."""
     # File or string
     if os.path.isfile(argument):
         is_file = True
@@ -29,53 +43,107 @@ def parse_main_argument(argument, export_folder):
             "deezer" in argument_file_content
             and argument_file_content.startswith("http")
         )
+        is_youtube = (
+            "youtu" in argument_file_content
+            and argument_file_content.startswith("http")
+        )
     else:
         is_file = False
         is_spotify = "spotify" in argument
         is_deezer = "deezer" in argument
-    # get df
+        # would be equivalent to argument youtube_url, doesn't exist
+        is_youtube = False
     if is_spotify:
-        sp = get_spotipy()
         if is_file:
-            with open(argument) as f:
-                urls = [line.strip() for line in f]
+            terms = extract_terms_from_file(argument)
+            df = get_spotify_playlists(terms)
+            logger.info(
+                "Reading file containing spotify urls at %s.", argument
+            )
         else:
-            urls = [x.strip() for x in argument.split(",")]
-        logger.debug("urls : %s.", urls)
-        logger.debug("Function get_spotify_playlists.")
-        df = get_spotify_playlists(sp, urls)
-        logger.debug(
-            "Exporting spotify playlists to export_spotify_track_names.csv."
-        )
-        df.to_csv(
-            export_folder + "/export_spotify_track_names.csv",
-            index=False,
-            sep="\t",
-        )
+            terms = extract_terms_from_arg(argument)
+            df = get_spotify_playlists(terms)
+            logger.info("Reading spotify urls %s.", argument)
     elif is_deezer:
         if is_file:
-            with open(argument) as f:
-                urls = [line.strip() for line in f]
+            terms = extract_terms_from_file(argument)
+            df = get_deezer_playlists(terms)
+            logger.info("Reading file containing deezer urls at %s.", argument)
         else:
-            urls = [x.strip() for x in argument.split(",")]
-        logger.debug("urls : %s.", urls)
-        logger.debug("Function get_deezer_playlists.")
-        df = get_deezer_playlists(urls)
-        logger.debug(
-            "Exporting deezer playlists to export_deezer_track_names.csv."
-        )
-        df.to_csv(
-            export_folder + "/export_deezer_track_names.csv",
-            index=False,
-            sep="\t",
-        )
+            terms = extract_terms_from_arg(argument)
+            df = get_deezer_playlists(terms)
+            logger.info("Reading deezer urls %s.", argument)
+    elif is_youtube:
+        if is_file:
+            df = pd.read_csv(argument, sep="\t", header=None)
+            logger.info(
+                "Reading file containing youtube urls at %s.", argument
+            )
+        else:
+            logger.error(
+                "Unexpected error in parse_main_argument function. Exiting."
+            )
+            exit()
     else:
         if is_file:
             df = pd.read_csv(argument, sep="\t", header=None)
+            logger.info(
+                "Reading file containing search terms at %s.", argument
+            )
         else:
             df = pd.DataFrame([x.strip() for x in argument.split(",")])
-    logger.debug(df)
+            logger.info("Reading search terms %s.", argument)
     return df
+
+
+def parse_arguments(args, export_folder):
+    """Parse the arguments. Returns a dataframe."""
+    if args.spotify_url:
+        terms = extract_terms_from_arg(args.spotify_url)
+        df = get_spotify_playlists(terms)
+        logger.info("Reading spotify urls %s.", args.spotify_url)
+    elif args.spotify_file:
+        terms = extract_terms_from_file(args.spotify_file)
+        df = get_spotify_playlists(terms)
+        logger.info(
+            "Reading file containing spotify urls at %s.", args.spotify_file
+        )
+    elif args.deezer_url:
+        terms = extract_terms_from_arg(args.deezer_url)
+        df = get_deezer_playlists(terms)
+        logger.info("Reading deezer urls %s.", args.deezer_url)
+    elif args.deezer_file:
+        terms = extract_terms_from_file(args.deezer_file)
+        df = get_deezer_playlists(terms)
+        logger.info(
+            "Reading file containing deezer urls at %s.", args.deezer_file
+        )
+    elif args.youtube_file:
+        # terms = extract_terms_from_file(args.youtube_file)
+        df = pd.read_csv(args.youtube_file, sep="\t", header=None)
+        logger.info(
+            "Reading file containing youtube urls at %s.", args.youtube_file
+        )
+    elif args.file_name:
+        # terms = extract_terms_from_file(args.file_name)
+        df = pd.read_csv(args.file_name, sep="\t", header=None)
+        logger.info(
+            "Reading file containing search terms at %s.", args.file_name
+        )
+    else:
+        logger.error("Unexpected error in parse_arguments function. Exiting.")
+        exit()
+    return df
+
+
+def extract_terms_from_file(file):
+    with open(file) as f:
+        terms = [line.strip() for line in f]
+    return terms
+
+
+def extract_terms_from_arg(arg):
+    return [x.strip() for x in arg.split(",")]
 
 
 def main():
@@ -86,13 +154,20 @@ def main():
         export_folder = args.export_folder_name
     else:
         export_folder = "ypc_exports"
-    logger.debug("Export folder : %s.", export_folder)
+    logger.info("Export folder : %s.", export_folder)
     Path(export_folder).mkdir(parents=True, exist_ok=True)
 
+    is_youtube = False
     # Parse main argument
     if args.main_argument:
         df = parse_main_argument(args.main_argument, export_folder)
-    # Parse other arguments
+        is_youtube = main_argument_is_youtube(args.main_argument)
+        logger.debug(
+            "main_argument : %s, is_youtube : %s.",
+            args.main_argument,
+            is_youtube,
+        )
+    # Verify other arguments
     elif not any(
         [
             args.spotify_url,
@@ -100,88 +175,66 @@ def main():
             args.file_name,
             args.spotify_file,
             args.deezer_file,
+            args.youtube_file,
         ]
     ):
         logger.error("No input. Use the -h flag to see help. Exiting.")
         exit()
-
-    # Spotify arguments
-    elif args.spotify_url or args.spotify_file:
-        sp = get_spotipy()
-        if args.spotify_url:
-            urls = [x.strip() for x in args.spotify_url.split(",")]
-        if args.spotify_file:
-            with open(args.spotify_file) as f:
-                urls = [line.strip() for line in f]
-        logger.debug("urls : %s.", urls)
-        logger.debug("Function get_spotify_playlists.")
-        df = get_spotify_playlists(sp, urls)
-        logger.debug(
-            "Exporting spotify playlists to export_spotify_track_names.csv."
-        )
-        df.to_csv(
-            export_folder + "/export_spotify_track_names.csv",
-            index=False,
-            sep="\t",
-        )
-    # Deezer arguments
-    elif args.deezer_url or args.deezer_file:
-        if args.deezer_url:
-            urls = [x.strip() for x in args.deezer_url.split(",")]
-        if args.deezer_file:
-            with open(args.deezer_file) as f:
-                urls = [line.strip() for line in f]
-        logger.debug("urls : %s.", urls)
-        logger.debug("Function get_deezer_playlists.")
-        df = get_deezer_playlists(urls)
-        logger.debug(
-            "Exporting deezer playlists to export_deezer_track_names.csv."
-        )
-        df.to_csv(
-            export_folder + "/export_deezer_track_names.csv",
-            index=False,
-            sep="\t",
-        )
-    # List of search terms
-    elif args.file_name:
-        df = pd.read_csv(args.file_name, sep="\t", header=None)
+    # Parse other arguments
     else:
-        logger.error("Unexpected error. Use -h to see available options.")
-        exit()
+        df = parse_arguments(args, export_folder)
+
+    # Parse download arguments
+    if not args.download_video and not args.download_audio:
+        logger.info(
+            "No download options selected, but the files containing the tracklist and the extracted youtube urls will still be exported. Use the flags -a to download audio, -v to download video."
+        )
 
     if args.no_search_youtube:
         logger.info("no_search_youtube mode. Exiting.")
+        df.to_csv(
+            export_folder + "/tracklist.csv",
+            index=False,
+            sep="\t",
+            header=False,
+        )
         exit()
 
-    logger.info("Extracting youtube urls.")
-    list_urls = []
-    for _, x in tqdm(df.iterrows(), dynamic_ncols=True, total=df.shape[0]):
-        list_urls.append(get_youtube_url(x[0]))
+    # Extract youtube urls except if df already contains youtube urls.
+    if not is_youtube and not args.youtube_file:
+        logger.info("Extracting youtube urls.")
+        list_urls = []
+        for _, x in tqdm(df.iterrows(), dynamic_ncols=True, total=df.shape[0]):
+            list_urls.append(ydl_get_url(x[0]))
 
-    logger.info("Exporting urls list.")
-    with open(export_folder + "/url_list_simple.csv", "w") as f:
-        for i in list_urls:
-            f.write(f"{i}\n")
+        logger.info("Exporting urls list.")
+        with open(export_folder + "/urls_list.csv", "w") as f:
+            for i in list_urls:
+                f.write(f"{i}\n")
 
-    df["url"] = pd.Series(list_urls).values
-    df.to_csv(export_folder + "/url_list_detailed.csv", index=False, sep="\t")
+        df["url"] = pd.Series(list_urls).values
+        df.to_csv(
+            export_folder + "/tracklist.csv",
+            index=False,
+            sep="\t",
+            header=False,
+        )
+    else:
+        # Transform df containing youtube urls to be compatible with ydl_download function
+        df.columns = ["url"]
 
     original_folder = os.getcwd()
+    # youtube urls has to be in column url of df
     # Video download
     if args.download_video:
         Path(export_folder + "/Video").mkdir(parents=True, exist_ok=True)
         os.chdir(export_folder + "/Video")
-        logger.info("Downloading videos.")
+        logger.info("Downloading video files.")
         for index, row in tqdm(
             df.iterrows(), dynamic_ncols=True, total=df.shape[0]
         ):
-            logger.debug(
-                "%s : Downloading video for %s : %s.",
-                index,
-                row[0],
-                row["url"],
-            )
-            downloading_video(row["url"])
+            logger.debug("%s : Downloading video for %s.", index, row[0])
+            ydl_download(row["url"])
         os.chdir(original_folder)
     # Audio download
     if args.download_audio:
@@ -191,13 +244,8 @@ def main():
         for index, row in tqdm(
             df.iterrows(), dynamic_ncols=True, total=df.shape[0]
         ):
-            logger.debug(
-                "%s : Downloading audio for %s : %s.",
-                index,
-                row[0],
-                row["url"],
-            )
-            downloading_video(row["url"], only_audio=True)
+            logger.debug("%s : Downloading audio for %s.", index, row[0])
+            ydl_download(row["url"], only_audio=True)
         os.chdir(original_folder)
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
@@ -210,7 +258,7 @@ def parse_args():
         "main_argument",
         nargs="?",
         type=str,
-        help="Any search terms allowed : search terms or deezer/spotify playlists urls (separated by comma) or filename containing search terms or deezer/spotify playlists urls (one by line)",
+        help="Any search terms allowed : search terms (quoted and separated by comma), deezer/spotify playlists urls (separated by comma) or filename containing search terms, deezer/spotify playlists urls (one by line) or youtube urls (one by line).",
     )
     parser.add_argument(
         "--debug",
@@ -249,6 +297,12 @@ def parse_args():
         "--deezer_file",
         type=str,
         help="File containing the links of the deezer playlists (one by line).",
+    )
+    parser.add_argument(
+        "-yf",
+        "--youtube_file",
+        type=str,
+        help="File containing youtube urls (one by line). The file url_list_simple.csv exported by ypc is a good candidate.",
     )
     parser.add_argument(
         "-n",

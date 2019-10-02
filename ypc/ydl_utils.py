@@ -15,7 +15,7 @@ class MyLogger(object):
         print(msg)
 
 
-def downloading_video(url, only_audio=False):
+def ydl_download(url, only_audio=False):
     if only_audio:
         ydl_opts = {
             "format": "bestaudio/best",
@@ -27,13 +27,24 @@ def downloading_video(url, only_audio=False):
                 }
             ],
             "logger": MyLogger(),
+            "outtmpl": "%(title)s.%(ext)s",
         }
     else:
         ydl_opts = {
             "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
             "logger": MyLogger(),
+            "outtmpl": "%(title)s.%(ext)s",
         }
     with YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info_dict)
-    return filename
+        # info_dict = ydl.extract_info(f"ytsearch1:{search_term}", download=True)
+        ydl.extract_info(url, download=True)
+        # filename = ydl.prepare_filename(info_dict)
+
+
+def ydl_get_url(search_term):
+    ydl_opts = {"logger": MyLogger()}
+    with YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(
+            f"ytsearch1:{search_term}", download=False
+        )
+    return info_dict["entries"][0]["webpage_url"]

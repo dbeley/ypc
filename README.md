@@ -48,9 +48,9 @@ ypc -h
 
 ```
 usage: ypc [-h] [--debug] [-f FILE_NAME] [-su SPOTIFY_URL] [-du DEEZER_URL]
-           [-sf SPOTIFY_FILE] [-df DEEZER_FILE] [-n EXPORT_FOLDER_NAME] [-v]
-           [-a] [--no_search_youtube]
-           main_argument
+           [-sf SPOTIFY_FILE] [-df DEEZER_FILE] [-yf YOUTUBE_FILE]
+           [-n EXPORT_FOLDER_NAME] [-v] [-a] [--no_search_youtube]
+           [main_argument]
 
 Convert spotify/deezer/text playlists to youtube urls or audio/video files.
 
@@ -76,6 +76,10 @@ optional arguments:
   -df DEEZER_FILE, --deezer_file DEEZER_FILE
                         File containing the links of the deezer playlists (one
                         by line).
+  -yf YOUTUBE_FILE, --youtube_file YOUTUBE_FILE
+                        File containing youtube urls (one by line). The file
+                        url_list_simple.csv exported by ypc is a good
+                        candidate.
   -n EXPORT_FOLDER_NAME, --export_folder_name EXPORT_FOLDER_NAME
                         Name of the export. Used to name the exports folder.
   -v, --download_video  Download the videos of the tracks found.
