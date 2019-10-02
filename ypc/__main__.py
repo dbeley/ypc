@@ -8,7 +8,7 @@ from tqdm import tqdm
 from ypc.download_video import downloading_video
 from ypc.spotify_playlist import get_spotipy, get_spotify_playlists
 from ypc.deezer_playlist import get_deezer_playlists
-from ypc.youtube_extract import youtube_extract_urls, get_youtube_url
+from ypc.youtube_extract import get_youtube_url
 
 logger = logging.getLogger()
 FORMAT = "%(levelname)s :: %(message)s"
@@ -152,8 +152,11 @@ def main():
     if args.no_search_youtube:
         logger.info("no_search_youtube mode. Exiting.")
         exit()
-    # list_urls = youtube_extract_urls(df)
-    list_urls = [get_youtube_url(x["title"]) for index, x in df.iterrows()]
+
+    logger.info("Extracting youtube urls.")
+    list_urls = []
+    for _, x in tqdm(df.iterrows(), dynamic_ncols=True, total=df.shape[0]):
+        list_urls.append(get_youtube_url(x[0]))
 
     logger.info("Exporting urls list.")
     with open(export_folder + "/url_list_simple.csv", "w") as f:
@@ -273,12 +276,6 @@ def parse_args():
         dest="no_search_youtube",
         action="store_true",
     )
-    # parser.add_argument(
-    #     "--spotify_username",
-    #     help="Name of the spotify user owning the playlists to extract (default = spotify).",
-    #     dest="spotify_username",
-    #     default="spotify",
-    # )
     parser.set_defaults(
         download_video=False, download_audio=False, no_search_youtube=False
     )
