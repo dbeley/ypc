@@ -9,42 +9,57 @@ logger = logging.getLogger(__name__)
 
 
 def get_spotipy():
-    # Spotify config file parsing
-    user_config_dir = os.path.expanduser("~/.config/ypc/")
-    try:
-        config = configparser.ConfigParser()
-        config.read(user_config_dir + "config.ini")
-        spotify_id = config["spotify"]["id"]
-        secret = config["spotify"]["secret"]
-    except Exception as e:
-        logger.error(
-            "Error with the config file. Be sure to have a valid ~/.config/ypc/config.ini file if you want to use the spotify playlist extraction features. Error : %s",
-            e,
-        )
-        if not os.path.exists(user_config_dir):
-            logger.info(
-                "Configuration folder not found. Creating ~/.config/ypc/."
+    # test if in Travis-CI
+    if "TRAVIS" in os.environ and os.environ["TRAVIS"] == "true":
+        try:
+            client_credentials_manager = SpotifyClientCredentials(
+                client_id=os.environ["SPOTIFY_CLIENT_ID"],
+                client_secret=os.environ["SPOTIFY_CLIENT_SECRET"],
             )
-            os.makedirs(user_config_dir)
-        if not os.path.isfile(user_config_dir + "config.ini"):
-            sample_config = (
-                "[spotify]\n"
-                "id=spotify_id_here\n"
-                "secret=spotify_secret_here\n"
+            return spotipy.Spotify(
+                client_credentials_manager=client_credentials_manager
             )
-            with open(user_config_dir + "config.ini", "w") as f:
-                f.write(sample_config)
-            logger.info(
-                "A sample configuration file has been created at ~/.config/ypc/config.ini. Go to https://developer.spotify.com/dashboard/login to create your own spotify application."
+        except Exception as e:
+            logger.error(e)
+    else:
+        # Spotify config file parsing
+        user_config_dir = os.path.expanduser("~/.config/ypc/")
+        try:
+            config = configparser.ConfigParser()
+            config.read(user_config_dir + "config.ini")
+            spotify_id = config["spotify"]["id"]
+            secret = config["spotify"]["secret"]
+        except Exception as e:
+            logger.error(
+                "Error with the config file. Be sure to have a valid ~/.config/ypc/config.ini file if you want to use the spotify playlist extraction features. Error : %s",
+                e,
             )
-        exit()
+            if not os.path.exists(user_config_dir):
+                logger.info(
+                    "Configuration folder not found. Creating ~/.config/ypc/."
+                )
+                os.makedirs(user_config_dir)
+            if not os.path.isfile(user_config_dir + "config.ini"):
+                sample_config = (
+                    "[spotify]\n"
+                    "id=spotify_id_here\n"
+                    "secret=spotify_secret_here\n"
+                )
+                with open(user_config_dir + "config.ini", "w") as f:
+                    f.write(sample_config)
+                logger.info(
+                    "A sample configuration file has been created at ~/.config/ypc/config.ini. Go to https://developer.spotify.com/dashboard/login to create your own spotify application."
+                )
+            exit()
 
-    # Spotify API
-    client_credentials_manager = SpotifyClientCredentials(
-        client_id=spotify_id, client_secret=secret
-    )
-    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-    return sp
+        # Spotify API
+        client_credentials_manager = SpotifyClientCredentials(
+            client_id=spotify_id, client_secret=secret
+        )
+        sp = spotipy.Spotify(
+            client_credentials_manager=client_credentials_manager
+        )
+        return sp
 
 
 def get_spotify_playlist_tracks(sp, username, playlist_id):
@@ -56,7 +71,8 @@ def get_spotify_playlist_tracks(sp, username, playlist_id):
     return tracks
 
 
-def get_spotify_playlists(sp, playlists):
+def get_spotify_playlists(playlists):
+    sp = get_spotipy()
     df = pd.DataFrame()
     list_songs = []
     for playlist in playlists:

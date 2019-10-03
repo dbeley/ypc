@@ -5,7 +5,7 @@ import time
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
-from ypc.spotify_utils import get_spotify_playlists, get_spotipy
+from ypc.spotify_utils import get_spotify_playlists
 from ypc.deezer_utils import get_deezer_playlists
 from ypc.ydl_utils import ydl_download, ydl_get_url
 
@@ -65,15 +65,13 @@ def parse_main_argument(argument, export_folder):
     if is_spotify:
         if is_file:
             terms = extract_terms_from_file(argument)
-            sp = get_spotipy()
-            df = get_spotify_playlists(sp, terms)
+            df = get_spotify_playlists(terms)
             logger.info(
                 "Reading file containing spotify urls at %s.", argument
             )
         else:
             terms = extract_terms_from_arg(argument)
-            sp = get_spotipy()
-            df = get_spotify_playlists(sp, terms)
+            df = get_spotify_playlists(terms)
             logger.info("Reading spotify urls %s.", argument)
     elif is_deezer:
         if is_file:
@@ -111,13 +109,11 @@ def parse_arguments(args, export_folder):
     """Parse the arguments. Returns a dataframe."""
     if args.spotify_url:
         terms = extract_terms_from_arg(args.spotify_url)
-        sp = get_spotipy()
-        df = get_spotify_playlists(sp, terms)
+        df = get_spotify_playlists(terms)
         logger.info("Reading spotify urls %s.", args.spotify_url)
     elif args.spotify_file:
         terms = extract_terms_from_file(args.spotify_file)
-        sp = get_spotipy()
-        df = get_spotify_playlists(sp, terms)
+        df = get_spotify_playlists(terms)
         logger.info(
             "Reading file containing spotify urls at %s.", args.spotify_file
         )

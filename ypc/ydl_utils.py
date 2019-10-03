@@ -16,33 +16,43 @@ class MyLogger(object):
 
 
 def ydl_download(url, only_audio=False):
-    if only_audio:
-        ydl_opts = {
-            "format": "bestaudio/best",
-            "postprocessors": [
-                {
-                    "key": "FFmpegExtractAudio",
-                    "preferredcodec": "mp3",
-                    "preferredquality": "320",
-                }
-            ],
-            "logger": MyLogger(),
-            "outtmpl": "%(title)s.%(ext)s",
-        }
-    else:
-        ydl_opts = {
-            "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
-            "logger": MyLogger(),
-            "outtmpl": "%(title)s.%(ext)s",
-        }
-    with YoutubeDL(ydl_opts) as ydl:
-        ydl.extract_info(url, download=True)
+    try:
+        if only_audio:
+            ydl_opts = {
+                "format": "bestaudio/best",
+                "postprocessors": [
+                    {
+                        "key": "FFmpegExtractAudio",
+                        "preferredcodec": "mp3",
+                        "preferredquality": "320",
+                    }
+                ],
+                "logger": MyLogger(),
+                "outtmpl": "%(title)s.%(ext)s",
+            }
+        else:
+            ydl_opts = {
+                "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
+                "logger": MyLogger(),
+                "outtmpl": "%(title)s.%(ext)s",
+            }
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.extract_info(url, download=True)
+    except Exception as e:
+        logger.error("Error with getting the youtube url for %s : %s.", url, e)
+        return None
 
 
 def ydl_get_url(search_term):
-    ydl_opts = {"logger": MyLogger()}
-    with YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(
-            f"ytsearch1:{search_term}", download=False
+    try:
+        ydl_opts = {"logger": MyLogger()}
+        with YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(
+                f"ytsearch1:{search_term}", download=False
+            )
+        return info_dict["entries"][0]["webpage_url"]
+    except Exception as e:
+        logger.error(
+            "Error with getting the youtube url for %s : %s.", search_term, e
         )
-    return info_dict["entries"][0]["webpage_url"]
+        return None
