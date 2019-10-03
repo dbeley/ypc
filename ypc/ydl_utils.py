@@ -36,9 +36,7 @@ def ydl_download(url, only_audio=False):
             "outtmpl": "%(title)s.%(ext)s",
         }
     with YoutubeDL(ydl_opts) as ydl:
-        # info_dict = ydl.extract_info(f"ytsearch1:{search_term}", download=True)
         ydl.extract_info(url, download=True)
-        # filename = ydl.prepare_filename(info_dict)
 
 
 def ydl_get_url(search_term):

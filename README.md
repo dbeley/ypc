@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8007d6fb15334ef485aadd64e133aa97)](https://app.codacy.com/app/dbeley/ypc?utm_source=github.com&utm_medium=referral&utm_content=dbeley/ypc&utm_campaign=Badge_Grade_Dashboard)
 
-This python utility allows the conversion of spotify/deezer/text playlists to youtube urls or audio/video files.
+This python utility allows the conversion of spotify/deezer/text playlists to youtube urls and/or audio/video files.
 
 It supports spotify and deezer playlist urls, as well as a list of terms to search (see below for some examples). 
 
@@ -93,10 +93,10 @@ optional arguments:
 
 #### Simple Examples
 
-Download audio files for several songs :
+Download videos for several songs :
 
 ```
-ypc "u2 one,xtc general and majors,debussy la mer" -a
+ypc "u2 one,xtc general and majors,debussy la mer" -v
 ```
 
 Download videos for several deezer playlists using the name "deezer_export" as export folder :
@@ -105,15 +105,17 @@ Download videos for several deezer playlists using the name "deezer_export" as e
 ypc DEEZER_PLAYLIST_URL1,DEEZER_PLAYLIST_URL2 -v -n deezer_export
 ```
 
-Download audio and video for each spotify playlists in the file spotify_playlists.txt (one by line) using the name "spotify_export" as export folder :
+Download audio and videos for each spotify playlists in the file spotify_playlists.txt (one by line) using the name "spotify_export" as export folder :
 
 ```
 ypc spotify_playlists.txt -a -v -n spotify_export
 ```
 
-The main ypc arguments you want are -a (download audio), -v (download video) and -n (set the name of the export folder).
+The main ypc arguments you want are -a (download audio), -v (download video) and -n (set the name of the export folder, default : ypc_export).
 
-You can set the medias (an url, a list of search terms, a file containing spotify playlist urls, etc.) to download without any argument and ypc will guess which kind of media it is, or use explicit argument, as shown in the examples below.
+If you don't set the -a and the -v flags, the script will still extract youtube urls for the search and write the csv files (see "Exported files").
+
+You can set the medias (an url, a list of search terms, a file containing spotify playlist urls, etc.) to download without any argument and ypc will guess which kind of media it is (as show above), or use explicit argument, as shown in the examples below.
 
 #### With a spotify url
 
@@ -124,7 +126,7 @@ ypc SPOTIFY_PLAYLIST_URL -a
 ypc -su SPOTIFY_PLAYLIST_URL -a
 ```
 
-Download the video founds on youtube from a file containing spotify playlists (one by line) :
+Download the videos founds on youtube from a file containing spotify playlists (one by line) :
 
 ```
 ypc spotify_list_playlists.txt -v
@@ -140,11 +142,27 @@ ypc DEEZER_PLAYLIST_URL1,DEEZER_PLAYLIST_URL2 -v -n deezer_export
 ypc -du DEEZER_PLAYLIST_URL1,DEEZER_PLAYLIST_URL2 -v -n deezer_export
 ```
 
-Download the video founds on youtube from a file containing deezer playlists (one by line) :
+Download the videos founds on youtube from a file containing deezer playlists (one by line) :
 
 ```
 ypc deezer_list_playlists.txt -v
 ypc -df deezer_list_playlists.txt -v
+```
+
+#### With youtube urls
+
+Download the videos from a file containing youtube urls (one by line) :
+
+```
+ypc youtube_urls.txt -v
+ypc -yf youtube_urls.txt -v
+```
+
+Extract youtube urls for several songs with song_export as export folder, and download the videos from the exported file :
+
+```
+ypc "u2 one,xtc general and majors,debussy la mer" -n song_export
+ypc song_export/urls_list.csv -v -n song_export
 ```
 
 #### With search terms
@@ -171,9 +189,18 @@ ypc sample_file.csv -a
 ypc -f sample_file.csv -a
 ```
 
-Download the video files for the tracks/search terms in the sample csv file above :
+Download the videos for the tracks/search terms in the sample csv file above :
 
 ```
 ypc sample_file.csv -v
 ypc -f sample_file.csv -v
 ```
+
+### Exported files
+
+The script will export several files in the export folder (you can set it with the -n/--export_folder_name flag, default : ypc_export) :
+
+- tracklist.csv : csv file containing the name of the songs and the youtube urls (separator : tab).
+- urls_list.csv : list of extracted youtube urls (one by line). You can use that file with ypc (see Examples - With youtube urls)
+- Audio : Folder containing the audio files (if -a)
+- Videos : Folder containing the video files (if -v)

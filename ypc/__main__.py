@@ -5,14 +5,23 @@ import time
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
-
-from ypc.spotify_utils import get_spotify_playlists
+from ypc.spotify_utils import get_spotify_playlists, get_spotipy
 from ypc.deezer_utils import get_deezer_playlists
 from ypc.ydl_utils import ydl_download, ydl_get_url
 
 logger = logging.getLogger()
 FORMAT = "%(levelname)s :: %(message)s"
 temps_debut = time.time()
+
+
+def extract_terms_from_file(file):
+    with open(file) as f:
+        terms = [line.strip() for line in f]
+    return terms
+
+
+def extract_terms_from_arg(arg):
+    return [x.strip() for x in arg.split(",")]
 
 
 def main_argument_is_youtube(argument):
@@ -56,13 +65,15 @@ def parse_main_argument(argument, export_folder):
     if is_spotify:
         if is_file:
             terms = extract_terms_from_file(argument)
-            df = get_spotify_playlists(terms)
+            sp = get_spotipy()
+            df = get_spotify_playlists(sp, terms)
             logger.info(
                 "Reading file containing spotify urls at %s.", argument
             )
         else:
             terms = extract_terms_from_arg(argument)
-            df = get_spotify_playlists(terms)
+            sp = get_spotipy()
+            df = get_spotify_playlists(sp, terms)
             logger.info("Reading spotify urls %s.", argument)
     elif is_deezer:
         if is_file:
@@ -100,11 +111,13 @@ def parse_arguments(args, export_folder):
     """Parse the arguments. Returns a dataframe."""
     if args.spotify_url:
         terms = extract_terms_from_arg(args.spotify_url)
-        df = get_spotify_playlists(terms)
+        sp = get_spotipy()
+        df = get_spotify_playlists(sp, terms)
         logger.info("Reading spotify urls %s.", args.spotify_url)
     elif args.spotify_file:
         terms = extract_terms_from_file(args.spotify_file)
-        df = get_spotify_playlists(terms)
+        sp = get_spotipy()
+        df = get_spotify_playlists(sp, terms)
         logger.info(
             "Reading file containing spotify urls at %s.", args.spotify_file
         )
@@ -119,13 +132,11 @@ def parse_arguments(args, export_folder):
             "Reading file containing deezer urls at %s.", args.deezer_file
         )
     elif args.youtube_file:
-        # terms = extract_terms_from_file(args.youtube_file)
         df = pd.read_csv(args.youtube_file, sep="\t", header=None)
         logger.info(
             "Reading file containing youtube urls at %s.", args.youtube_file
         )
     elif args.file_name:
-        # terms = extract_terms_from_file(args.file_name)
         df = pd.read_csv(args.file_name, sep="\t", header=None)
         logger.info(
             "Reading file containing search terms at %s.", args.file_name
@@ -134,16 +145,6 @@ def parse_arguments(args, export_folder):
         logger.error("Unexpected error in parse_arguments function. Exiting.")
         exit()
     return df
-
-
-def extract_terms_from_file(file):
-    with open(file) as f:
-        terms = [line.strip() for line in f]
-    return terms
-
-
-def extract_terms_from_arg(arg):
-    return [x.strip() for x in arg.split(",")]
 
 
 def main():
