@@ -1,0 +1,16 @@
+[run]
+branch = True
+source = ypc
+
+[report]
+exclude_lines =
+    if self.debug:
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    raise AssertionError
+ignore_errors = True
+omit =
+    ypc/__init__.py
+    tests/*
+
