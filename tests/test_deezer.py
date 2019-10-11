@@ -36,6 +36,3 @@ def test_get_deezer_songs():
         pd.DataFrame,
     ):
         raise AssertionError()
-
-    with pytest.raises(Exception):
-        deezer_utils.get_deezer_songs("https://deezer.com/songs")
