@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "*"
+twine = "*"
 
 [packages]
 e1839a8 = {editable = true,path = "."}
