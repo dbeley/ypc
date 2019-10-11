@@ -61,7 +61,7 @@ def test_parse_argument():
         youtube_file=None,
         file_name=SEARCH_FILE,
     )
-    args_deezer = argparse.Namespace(
+    args_deezer_file = argparse.Namespace(
         spotify_url=None,
         spotify_file=None,
         deezer_url=None,
@@ -69,9 +69,25 @@ def test_parse_argument():
         youtube_file=None,
         file_name=None,
     )
-    args_spotify = argparse.Namespace(
+    args_deezer_url = argparse.Namespace(
+        spotify_url=None,
+        spotify_file=None,
+        deezer_url=DEEZER_ALBUM_URL,
+        deezer_file=None,
+        youtube_file=None,
+        file_name=None,
+    )
+    args_spotify_file = argparse.Namespace(
         spotify_url=None,
         spotify_file=SPOTIFY_FILE,
+        deezer_url=None,
+        deezer_file=None,
+        youtube_file=None,
+        file_name=None,
+    )
+    args_spotify_url = argparse.Namespace(
+        spotify_url=SPOTIFY_ALBUM_URL,
+        spotify_file=None,
         deezer_url=None,
         deezer_file=None,
         youtube_file=None,
@@ -90,11 +106,19 @@ def test_parse_argument():
     ):
         raise AssertionError()
     if not isinstance(
-        ypc.parse_arguments(args_deezer, "ypc_export"), pd.DataFrame
+        ypc.parse_arguments(args_deezer_file, "ypc_export"), pd.DataFrame
     ):
         raise AssertionError()
     if not isinstance(
-        ypc.parse_arguments(args_spotify, "ypc_export"), pd.DataFrame
+        ypc.parse_arguments(args_deezer_url, "ypc_export"), pd.DataFrame
+    ):
+        raise AssertionError()
+    if not isinstance(
+        ypc.parse_arguments(args_spotify_file, "ypc_export"), pd.DataFrame
+    ):
+        raise AssertionError()
+    if not isinstance(
+        ypc.parse_arguments(args_spotify_url, "ypc_export"), pd.DataFrame
     ):
         raise AssertionError()
     if not isinstance(

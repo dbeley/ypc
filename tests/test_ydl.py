@@ -1,4 +1,5 @@
 from ypc import ydl_utils
+import pytest
 
 
 SEARCH_FILE = "tests/test_files/search_terms.txt"
