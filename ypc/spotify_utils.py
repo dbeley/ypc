@@ -8,7 +8,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 logger = logging.getLogger(__name__)
 
 
-def get_spotipy():
+def get_spotipy():  # pragma: no cover
     # test if in Travis-CI
     if "TRAVIS" in os.environ and os.environ["TRAVIS"] == "true":
         try:

@@ -101,6 +101,14 @@ def test_parse_argument():
         youtube_file=YOUTUBE_FILE,
         file_name=None,
     )
+    args_no_youtube = argparse.Namespace(
+        spotify_url=None,
+        spotify_file=None,
+        deezer_url=None,
+        deezer_file=None,
+        youtube_file="https://youtube.com",
+        file_name=None,
+    )
     if not isinstance(
         ypc.parse_arguments(args_search, "ypc_export"), pd.DataFrame
     ):
@@ -128,6 +136,7 @@ def test_parse_argument():
 
     with pytest.raises(Exception):
         ypc.parse_arguments("invalid", "invalid")
+        ypc.parse_arguments(args_no_youtube, "ypc_export"), pd.DataFrame
 
 
 def test_parse_main_argument():

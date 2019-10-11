@@ -13,4 +13,5 @@ ignore_errors = True
 omit =
     ypc/__init__.py
     tests/*
+    setup.py
 

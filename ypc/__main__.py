@@ -149,7 +149,7 @@ def parse_arguments(args, export_folder):
     return df
 
 
-def main():
+def main():  # pragma: no cover
     args = parse_args()
 
     # Export folder
