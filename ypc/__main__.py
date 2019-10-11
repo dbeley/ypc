@@ -5,8 +5,8 @@ import time
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
-from ypc.spotify_utils import get_spotify_playlists
-from ypc.deezer_utils import get_deezer_playlists
+from ypc.spotify_utils import get_spotify_songs
+from ypc.deezer_utils import get_deezer_songs
 from ypc.ydl_utils import ydl_download, ydl_get_url
 
 logger = logging.getLogger()
@@ -15,7 +15,7 @@ temps_debut = time.time()
 
 
 def extract_terms_from_file(file):
-    with open(file) as f:
+    with open(file, "r", encoding="utf-8") as f:
         terms = [line.strip() for line in f]
     return terms
 
@@ -65,26 +65,26 @@ def parse_main_argument(argument, export_folder):
     if is_spotify:
         if is_file:
             terms = extract_terms_from_file(argument)
-            df = get_spotify_playlists(terms)
+            df = get_spotify_songs(terms)
             logger.info(
                 "Reading file containing spotify urls at %s.", argument
             )
         else:
             terms = extract_terms_from_arg(argument)
-            df = get_spotify_playlists(terms)
+            df = get_spotify_songs(terms)
             logger.info("Reading spotify urls %s.", argument)
     elif is_deezer:
         if is_file:
             terms = extract_terms_from_file(argument)
-            df = get_deezer_playlists(terms)
+            df = get_deezer_songs(terms)
             logger.info("Reading file containing deezer urls at %s.", argument)
         else:
             terms = extract_terms_from_arg(argument)
-            df = get_deezer_playlists(terms)
+            df = get_deezer_songs(terms)
             logger.info("Reading deezer urls %s.", argument)
     elif is_youtube:
         if is_file:
-            df = pd.read_csv(argument, sep="\t", header=None)
+            df = pd.read_csv(argument, sep="\t", header=None, names=["url"])
             logger.info(
                 "Reading file containing youtube urls at %s.", argument
             )
@@ -95,12 +95,14 @@ def parse_main_argument(argument, export_folder):
             exit()
     else:
         if is_file:
-            df = pd.read_csv(argument, sep="\t", header=None)
+            df = pd.read_csv(argument, sep="\t", header=None, names=["title"])
             logger.info(
                 "Reading file containing search terms at %s.", argument
             )
         else:
-            df = pd.DataFrame([x.strip() for x in argument.split(",")])
+            df = pd.DataFrame(
+                [x.strip() for x in argument.split(",")], columns=["title"]
+            )
             logger.info("Reading search terms %s.", argument)
     return df
 
@@ -109,31 +111,35 @@ def parse_arguments(args, export_folder):
     """Parse the arguments. Returns a dataframe."""
     if args.spotify_url:
         terms = extract_terms_from_arg(args.spotify_url)
-        df = get_spotify_playlists(terms)
+        df = get_spotify_songs(terms)
         logger.info("Reading spotify urls %s.", args.spotify_url)
     elif args.spotify_file:
         terms = extract_terms_from_file(args.spotify_file)
-        df = get_spotify_playlists(terms)
+        df = get_spotify_songs(terms)
         logger.info(
             "Reading file containing spotify urls at %s.", args.spotify_file
         )
     elif args.deezer_url:
         terms = extract_terms_from_arg(args.deezer_url)
-        df = get_deezer_playlists(terms)
+        df = get_deezer_songs(terms)
         logger.info("Reading deezer urls %s.", args.deezer_url)
     elif args.deezer_file:
         terms = extract_terms_from_file(args.deezer_file)
-        df = get_deezer_playlists(terms)
+        df = get_deezer_songs(terms)
         logger.info(
             "Reading file containing deezer urls at %s.", args.deezer_file
         )
     elif args.youtube_file:
-        df = pd.read_csv(args.youtube_file, sep="\t", header=None)
+        df = pd.read_csv(
+            args.youtube_file, sep="\t", header=None, names=["url"]
+        )
         logger.info(
             "Reading file containing youtube urls at %s.", args.youtube_file
         )
     elif args.file_name:
-        df = pd.read_csv(args.file_name, sep="\t", header=None)
+        df = pd.read_csv(
+            args.file_name, sep="\t", header=None, names=["title"]
+        )
         logger.info(
             "Reading file containing search terms at %s.", args.file_name
         )
@@ -193,7 +199,7 @@ def main():
             export_folder + "/tracklist.csv",
             index=False,
             sep="\t",
-            header=False,
+            header=True,
         )
         exit()
 
@@ -202,10 +208,12 @@ def main():
         logger.info("Extracting youtube urls.")
         list_urls = []
         for _, x in tqdm(df.iterrows(), dynamic_ncols=True, total=df.shape[0]):
-            list_urls.append(ydl_get_url(x[0]))
+            list_urls.append(ydl_get_url(x["title"]))
 
         logger.info("Exporting urls list.")
-        with open(export_folder + "/urls_list.csv", "w") as f:
+        with open(
+            export_folder + "/urls_list.csv", "w", encoding="utf-8"
+        ) as f:
             for i in list_urls:
                 f.write(f"{i}\n")
 
@@ -214,11 +222,11 @@ def main():
             export_folder + "/tracklist.csv",
             index=False,
             sep="\t",
-            header=False,
+            header=True,
         )
-    else:
-        # Transform df containing youtube urls to be compatible with ydl_download function
-        df.columns = ["url"]
+    # else:
+    #     # Transform df containing youtube urls to be compatible with ydl_download function
+    #     df.columns = ["url"]
 
     original_folder = os.getcwd()
     # youtube urls has to be in column url of df
@@ -230,7 +238,7 @@ def main():
         for index, row in tqdm(
             df.iterrows(), dynamic_ncols=True, total=df.shape[0]
         ):
-            logger.debug("%s : Downloading video for %s.", index, row[0])
+            logger.debug("%s : Downloading video for %s.", index, row["url"])
             ydl_download(row["url"])
         os.chdir(original_folder)
     # Audio download
@@ -241,7 +249,7 @@ def main():
         for index, row in tqdm(
             df.iterrows(), dynamic_ncols=True, total=df.shape[0]
         ):
-            logger.debug("%s : Downloading audio for %s.", index, row[0])
+            logger.debug("%s : Downloading audio for %s.", index, row["url"])
             ydl_download(row["url"], only_audio=True)
         os.chdir(original_folder)
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))

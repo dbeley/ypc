@@ -63,36 +63,77 @@ def get_spotipy():
 
 
 def get_spotify_playlist_tracks(sp, username, playlist_id):
+    df = pd.DataFrame()
     results = sp.user_playlist_tracks(username, playlist_id)
     tracks = results["items"]
     while results["next"]:
         results = sp.next(results)
         tracks.extend(results["items"])
-    return tracks
+    for song in tracks:
+        artist = str(song["track"]["artists"][0]["name"])
+        title = str(song["track"]["name"])
+        df = df.append(
+            {
+                "title": artist + " - " + title,
+                "playlist_url": playlist_id,
+                "track_name": title,
+                "artist": artist,
+            },
+            ignore_index=True,
+        )
+    return df
 
 
-def get_spotify_playlists(playlists):
+def get_spotify_album_tracks(sp, album_id):
+    df = pd.DataFrame()
+    results = sp.album_tracks(album_id, limit=None)
+    logger.debug("Album tracks for %s : %s.", album_id, results)
+    for song in results["items"]:
+        artists = ",".join([x["name"] for x in song["artists"]])
+        title = song["name"]
+        track_number = int(song["track_number"])
+        df = df.append(
+            {
+                "title": artists + " - " + title,
+                "album_url": album_id,
+                "track_name": title,
+                "artist": artists,
+                "track_number": track_number,
+            },
+            ignore_index=True,
+        )
+    return df
+
+
+def get_spotify_songs(terms):
     sp = get_spotipy()
     df = pd.DataFrame()
-    list_songs = []
-    for playlist in playlists:
+    for item in terms:
+        logger.debug(item)
         try:
-            list_songs = get_spotify_playlist_tracks(
-                sp, username=None, playlist_id=playlist
-            )
+            # item is album
+            if "album" in item:
+                df = pd.concat(
+                    [df, get_spotify_album_tracks(sp, album_id=item)],
+                    sort=False,
+                )
+            # item is playlist
+            elif "playlist" in item:
+                df = pd.concat(
+                    [
+                        df,
+                        get_spotify_playlist_tracks(
+                            sp, username=None, playlist_id=item
+                        ),
+                    ],
+                    sort=False,
+                )
+            else:
+                logger.warning("%s not recognized by get_spotify_songs.", item)
         except Exception as e:
             logger.error(
                 "Error when requesting Spotify API. Be sure that your config.ini file is correct. Error : %s",
                 e,
             )
             exit()
-        for song in list_songs:
-            artist = str(song["track"]["artists"][0]["name"])
-            title = str(song["track"]["name"])
-            df = df.append(
-                {"title": artist + " - " + title, "playlist_url": playlist},
-                ignore_index=True,
-            )
-    # title need to be the first column
-    df = df[["title", "playlist_url"]]
     return df

@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_deezer_playlist_tracks(playlist):
+    df = pd.DataFrame()
     playlist = (
         f"https://api.deezer.com/playlist/{playlist.split('/')[-1]}/tracks"
     )
@@ -19,31 +20,54 @@ def get_deezer_playlist_tracks(playlist):
         list_res.append(res)
         if "next" not in res:
             break
-
-    list_dict_tracks = []
     for res in list_res:
         for track in res["data"]:
-            dict_track = {
-                "artist": track["artist"]["name"],
-                "title": track["title"],
-            }
-            list_dict_tracks.append(dict_track)
-    return list_dict_tracks
-
-
-def get_deezer_playlists(playlists):
-    df = pd.DataFrame()
-    list_songs = []
-    for playlist in playlists:
-        list_songs = get_deezer_playlist_tracks(playlist)
-        for song in list_songs:
+            artist = track["artist"]["name"]
+            title = track["title"]
             df = df.append(
                 {
-                    "title": song["artist"] + " - " + song["title"],
+                    "artist": artist,
+                    "track_name": title,
+                    "title": artist + " - " + title,
                     "playlist_url": playlist,
                 },
                 ignore_index=True,
             )
-    # title need to be the first column
-    df = df[["title", "playlist_url"]]
+    return df
+
+
+def get_deezer_album_tracks(album):
+    df = pd.DataFrame()
+    api_url = f"https://api.deezer.com/album/{album.split('/')[-1]}"
+    logger.debug("Album api url : %s", api_url)
+    res = requests.get(api_url).json()
+    logger.debug("Album deezer %s : %s.", album, res)
+    for track in res["tracks"]["data"]:
+        artist = track["artist"]["name"]
+        title = track["title"]
+        df = df.append(
+            {
+                "artist": artist,
+                "track_name": title,
+                "album": res["title"],
+                "album_url": album,
+                "title": artist + " - " + title,
+            },
+            ignore_index=True,
+        )
+    return df
+
+
+def get_deezer_songs(terms):
+    df = pd.DataFrame()
+    for item in terms:
+        logger.debug(item)
+        # item is album
+        if "album" in item:
+            df = pd.concat([df, get_deezer_album_tracks(item)], sort=False)
+        # item is playlist
+        elif "playlist" in item:
+            df = pd.concat([df, get_deezer_playlist_tracks(item)], sort=False)
+        else:
+            logger.warning("%s not recognized by get_deezer_songs.", item)
     return df
