@@ -69,5 +69,8 @@ def get_deezer_songs(terms):
         elif "playlist" in item:
             df = pd.concat([df, get_deezer_playlist_tracks(item)], sort=False)
         else:
-            logger.warning("%s not recognized by get_deezer_songs.", item)
+            logger.error(
+                "%s not supported. Please retry with another search.", item
+            )
+            exit()
     return df

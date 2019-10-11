@@ -112,30 +112,25 @@ def get_spotify_songs(terms):
     df = pd.DataFrame()
     for item in terms:
         logger.debug(item)
-        try:
-            # item is album
-            if "album" in item:
-                df = pd.concat(
-                    [df, get_spotify_album_tracks(sp, album_id=item)],
-                    sort=False,
-                )
-            # item is playlist
-            elif "playlist" in item:
-                df = pd.concat(
-                    [
-                        df,
-                        get_spotify_playlist_tracks(
-                            sp, username=None, playlist_id=item
-                        ),
-                    ],
-                    sort=False,
-                )
-            else:
-                logger.warning("%s not recognized by get_spotify_songs.", item)
-        except Exception as e:
+        # item is album
+        if "album" in item:
+            df = pd.concat(
+                [df, get_spotify_album_tracks(sp, album_id=item)], sort=False
+            )
+        # item is playlist
+        elif "playlist" in item:
+            df = pd.concat(
+                [
+                    df,
+                    get_spotify_playlist_tracks(
+                        sp, username=None, playlist_id=item
+                    ),
+                ],
+                sort=False,
+            )
+        else:
             logger.error(
-                "Error when requesting Spotify API. Be sure that your config.ini file is correct. Error : %s",
-                e,
+                "%s not supported. Please retry with another search.", item
             )
             exit()
     return df

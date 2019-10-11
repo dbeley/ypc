@@ -88,11 +88,6 @@ def parse_main_argument(argument, export_folder):
             logger.info(
                 "Reading file containing youtube urls at %s.", argument
             )
-        else:
-            logger.error(
-                "Unexpected error in parse_main_argument function. Exiting."
-            )
-            exit()
     else:
         if is_file:
             df = pd.read_csv(argument, sep="\t", header=None, names=["title"])
@@ -143,9 +138,6 @@ def parse_arguments(args, export_folder):
         logger.info(
             "Reading file containing search terms at %s.", args.file_name
         )
-    else:
-        logger.error("Unexpected error in parse_arguments function. Exiting.")
-        exit()
     return df
 
 
@@ -255,7 +247,7 @@ def main():  # pragma: no cover
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
 
-def parse_args():
+def parse_args():  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Convert spotify/deezer/text albums/playlists to youtube urls or audio/video files."
     )
