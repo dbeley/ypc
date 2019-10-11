@@ -45,7 +45,9 @@ def get_spotipy():
                     "id=spotify_id_here\n"
                     "secret=spotify_secret_here\n"
                 )
-                with open(user_config_dir + "config.ini", "w") as f:
+                with open(
+                    user_config_dir + "config.ini", "w", encoding="utf-8"
+                ) as f:
                     f.write(sample_config)
                 logger.info(
                     "A sample configuration file has been created at ~/.config/ypc/config.ini. Go to https://developer.spotify.com/dashboard/login to create your own spotify application."

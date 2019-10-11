@@ -15,7 +15,7 @@ temps_debut = time.time()
 
 
 def extract_terms_from_file(file):
-    with open(file) as f:
+    with open(file, encoding="utf-8") as f:
         terms = [line.strip() for line in f]
     return terms
 
@@ -205,7 +205,9 @@ def main():
             list_urls.append(ydl_get_url(x[0]))
 
         logger.info("Exporting urls list.")
-        with open(export_folder + "/urls_list.csv", "w") as f:
+        with open(
+            export_folder + "/urls_list.csv", "w", encoding="utf-8"
+        ) as f:
             for i in list_urls:
                 f.write(f"{i}\n")
 
