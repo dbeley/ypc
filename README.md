@@ -5,11 +5,11 @@
 
 This python utility allows the conversion of spotify/deezer/text albums/playlists to youtube urls and/or audio/video files.
 
-It supports spotify and deezer playlist and album urls, as well as a list of terms to search (see below for some examples). 
+It supports spotify and deezer urls (album and playlist), as well as a list of terms to search (see below for some examples). 
 
-It also supports files containing several spotify or deezer playlist urls or terms to search (one by line). Unfortunately, the mix of several types is not supported at this moment (spotify and deezer playlists urls in the same file for example).
+It also supports files containing several of the compatible search terms (one by line). Unfortunately, the mix of several types is not supported at this moment (spotify and deezer urls in the same file for example).
 
-If you want to extract spotify playlists, you need to set up a valid config.ini file with your spotify api client id and secret (go to [developer.spotify.com/dashboard/login](https://developer.spotify.com/dashboard/login) to create your own spotify application) and place it in the ~/.config/ypc/ directory (see the config_sample.ini file as an example).
+If you want to extract spotify albums/playlists, you need to set up a valid config.ini file with your spotify api client id and secret (go to [developer.spotify.com/dashboard/login](https://developer.spotify.com/dashboard/login) to create your own spotify application) and place it in the ~/.config/ypc/ directory (see the config_sample.ini file as an example).
 
 ## Requirements
 
@@ -48,6 +48,50 @@ ypc -h
 ```
 
 ```
+usage: ypc [-h] [--debug] [-f FILE_NAME] [-su SPOTIFY_URL] [-du DEEZER_URL]
+           [-sf SPOTIFY_FILE] [-df DEEZER_FILE] [-yf YOUTUBE_FILE]
+           [-n EXPORT_FOLDER_NAME] [-v] [-a] [--no_search_youtube]
+           [main_argument]
+
+Convert spotify/deezer/text albums/playlists to youtube urls or audio/video
+files.
+
+positional arguments:
+  main_argument         Any search terms allowed : search terms (quoted and
+                        separated by comma), deezer/spotify playlist/album
+                        urls (separated by comma) or filename containing
+                        search terms : deezer/spotify album/playlist urls (one
+                        by line) or youtube urls (one by line).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --debug               Display debugging information.
+  -f FILE_NAME, --file_name FILE_NAME
+                        File containing the name of the songs (one search term
+                        by line).
+  -su SPOTIFY_URL, --spotify_url SPOTIFY_URL
+                        Url of the spotify album/playlist urls (separated by
+                        comma).
+  -du DEEZER_URL, --deezer_url DEEZER_URL
+                        Url of the deezer album/playlist urls (separated by
+                        comma).
+  -sf SPOTIFY_FILE, --spotify_file SPOTIFY_FILE
+                        File containing the links of the spotify
+                        album/playlist urls (one by line).
+  -df DEEZER_FILE, --deezer_file DEEZER_FILE
+                        File containing the links of the deezer album/playlist
+                        urls (one by line).
+  -yf YOUTUBE_FILE, --youtube_file YOUTUBE_FILE
+                        File containing youtube urls (one by line). The file
+                        url_list_simple.csv exported by ypc is a good
+                        candidate.
+  -n EXPORT_FOLDER_NAME, --export_folder_name EXPORT_FOLDER_NAME
+                        Name of the export. Used to name the exports folder.
+  -v, --download_video  Download the videos of the tracks found.
+  -a, --download_audio  Download the audio files of the tracks found.
+  --no_search_youtube   Doesn't search youtube urls. Use it with the
+                        -su/-du/-sf/-df flags if you want to export only the
+                        track names from the albums/playlists.
 ```
 
 ### Examples

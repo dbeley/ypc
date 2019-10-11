@@ -257,13 +257,13 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Convert spotify/deezer/text playlists to youtube urls or audio/video files."
+        description="Convert spotify/deezer/text albums/playlists to youtube urls or audio/video files."
     )
     parser.add_argument(
         "main_argument",
         nargs="?",
         type=str,
-        help="Any search terms allowed : search terms (quoted and separated by comma), deezer/spotify playlists urls (separated by comma) or filename containing search terms, deezer/spotify playlists urls (one by line) or youtube urls (one by line).",
+        help="Any search terms allowed : search terms (quoted and separated by comma), deezer/spotify playlist/album urls (separated by comma) or filename containing search terms : deezer/spotify album/playlist urls (one by line) or youtube urls (one by line).",
     )
     parser.add_argument(
         "--debug",
@@ -283,25 +283,25 @@ def parse_args():
         "-su",
         "--spotify_url",
         type=str,
-        help="Url of the spotify playlists (separated by comma).",
+        help="Url of the spotify album/playlist urls (separated by comma).",
     )
     parser.add_argument(
         "-du",
         "--deezer_url",
         type=str,
-        help="Url of the deezer playlists (separated by comma).",
+        help="Url of the deezer album/playlist urls (separated by comma).",
     )
     parser.add_argument(
         "-sf",
         "--spotify_file",
         type=str,
-        help="File containing the links of the spotify playlists (one by line).",
+        help="File containing the links of the spotify album/playlist urls (one by line).",
     )
     parser.add_argument(
         "-df",
         "--deezer_file",
         type=str,
-        help="File containing the links of the deezer playlists (one by line).",
+        help="File containing the links of the deezer album/playlist urls (one by line).",
     )
     parser.add_argument(
         "-yf",
@@ -331,7 +331,7 @@ def parse_args():
     )
     parser.add_argument(
         "--no_search_youtube",
-        help="Doesn't search youtube urls. Use it with the -su/-du/-sf/-df flags if you want to export only the track names from playlists.",
+        help="Doesn't search youtube urls. Use it with the -su/-du/-sf/-df flags if you want to export only the track names from the albums/playlists.",
         dest="no_search_youtube",
         action="store_true",
     )

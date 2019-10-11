@@ -2,6 +2,7 @@ from ypc import __main__ as ypc
 import pandas as pd
 import argparse
 import pytest
+import os
 
 DEEZER_ALBUM_URL = "https://www.deezer.com/fr/album/95467"
 DEEZER_FILE = "tests/test_files/deezer_urls.txt"
@@ -150,6 +151,10 @@ def test_parse_main_argument():
         raise AssertionError()
 
 
+@pytest.mark.skipif(
+    "TRAVIS" in os.environ and os.environ["TRAVIS"] == "true",
+    reason="doesn't work with Travis",
+)
 def test_parse_args():
     if not isinstance(ypc.parse_args(), argparse.Namespace):
         raise AssertionError()
