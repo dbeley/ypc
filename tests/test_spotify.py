@@ -18,8 +18,8 @@ def test_get_spotify_playlist_tracks(sp):
     ):
         raise AssertionError()
     with pytest.raises(Exception):
-        spotify_utils.get_spotify_playlist_tracks(SPOTIFY_ALBUM_URL)
-        spotify_utils.get_spotify_playlist_tracks(SPOTIFY_FILE)
+        spotify_utils.get_spotify_playlist_tracks(sp, None, SPOTIFY_ALBUM_URL)
+        spotify_utils.get_spotify_playlist_tracks(sp, None, SPOTIFY_FILE)
 
 
 def test_get_spotify_album_tracks(sp):
@@ -29,8 +29,8 @@ def test_get_spotify_album_tracks(sp):
     ):
         raise AssertionError()
     with pytest.raises(Exception):
-        spotify_utils.get_spotify_album_tracks(SPOTIFY_PLAYLIST_URL)
-        spotify_utils.get_spotify_album_tracks(SPOTIFY_FILE)
+        spotify_utils.get_spotify_album_tracks(sp, SPOTIFY_PLAYLIST_URL)
+        spotify_utils.get_spotify_album_tracks(sp, SPOTIFY_FILE)
 
 
 def test_get_spotify_songs():

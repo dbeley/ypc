@@ -3,11 +3,12 @@ import logging
 import os
 import time
 import pandas as pd
+import numpy as np
 from pathlib import Path
 from tqdm import tqdm
 from ypc.spotify_utils import get_spotify_songs
 from ypc.deezer_utils import get_deezer_songs
-from ypc.ydl_utils import ydl_download, ydl_get_url
+from ypc.ydl_utils import YdlDownloadThread, get_youtube_url
 
 logger = logging.getLogger()
 FORMAT = "%(levelname)s :: %(message)s"
@@ -141,6 +142,32 @@ def parse_arguments(args, export_folder):
     return df
 
 
+def thread_download(df, num_threads, only_audio, export_folder):
+    """ Function spawning threads to download a part of the youtube urls. """
+    if only_audio:
+        logger.info("Downloading audio files with %s threads.", num_threads)
+    else:
+        logger.info("Downloading video files with %s threads.", num_threads)
+
+    threads = []
+    original_folder = os.getcwd()
+    Path(export_folder).mkdir(parents=True, exist_ok=True)
+    os.chdir(export_folder)
+
+    # youtube urls has to be in column url of df
+    list_df = np.array_split(df, num_threads)
+    for index, df in enumerate(list_df):
+        # Create and start threads.
+        t = YdlDownloadThread(index, df, only_audio)
+        t.start()
+        threads.append(t)
+
+    # Join all threads.
+    for t in threads:
+        t.join()
+    os.chdir(original_folder)
+
+
 def main():  # pragma: no cover
     args = parse_args()
 
@@ -200,7 +227,7 @@ def main():  # pragma: no cover
         logger.info("Extracting youtube urls.")
         list_urls = []
         for _, x in tqdm(df.iterrows(), dynamic_ncols=True, total=df.shape[0]):
-            list_urls.append(ydl_get_url(x["title"]))
+            list_urls.append(get_youtube_url(x["title"]))
 
         logger.info("Exporting urls list.")
         with open(
@@ -220,30 +247,15 @@ def main():  # pragma: no cover
     #     # Transform df containing youtube urls to be compatible with ydl_download function
     #     df.columns = ["url"]
 
-    original_folder = os.getcwd()
-    # youtube urls has to be in column url of df
-    # Video download
-    if args.download_video:
-        Path(export_folder + "/Video").mkdir(parents=True, exist_ok=True)
-        os.chdir(export_folder + "/Video")
-        logger.info("Downloading video files.")
-        for index, row in tqdm(
-            df.iterrows(), dynamic_ncols=True, total=df.shape[0]
-        ):
-            logger.debug("%s : Downloading video for %s.", index, row["url"])
-            ydl_download(row["url"])
-        os.chdir(original_folder)
-    # Audio download
-    if args.download_audio:
-        Path(export_folder + "/Audio").mkdir(parents=True, exist_ok=True)
-        os.chdir(export_folder + "/Audio")
-        logger.info("Downloading audio files.")
-        for index, row in tqdm(
-            df.iterrows(), dynamic_ncols=True, total=df.shape[0]
-        ):
-            logger.debug("%s : Downloading audio for %s.", index, row["url"])
-            ydl_download(row["url"], only_audio=True)
-        os.chdir(original_folder)
+    if args.download_video or args.download_audio:
+        if args.download_video:
+            only_audio = False
+            export_folder += "/Video"
+        else:
+            only_audio = True
+            export_folder += "/Audio"
+        thread_download(df, args.num_threads, only_audio, export_folder)
+
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
 
@@ -326,6 +338,12 @@ def parse_args():  # pragma: no cover
         help="Doesn't search youtube urls. Use it with the -su/-du/-sf/-df flags if you want to export only the track names from the albums/playlists.",
         dest="no_search_youtube",
         action="store_true",
+    )
+    parser.add_argument(
+        "--num_threads",
+        help="Number of threads to use to download the audio/video files (Default: 4, only effective if the -a/-v flags are set).",
+        type=int,
+        default=4,
     )
     parser.set_defaults(
         download_video=False, download_audio=False, no_search_youtube=False
