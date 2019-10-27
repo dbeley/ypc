@@ -52,6 +52,7 @@ ypc -h
 usage: ypc [-h] [--debug] [-f FILE_NAME] [-su SPOTIFY_URL] [-du DEEZER_URL]
            [-sf SPOTIFY_FILE] [-df DEEZER_FILE] [-yf YOUTUBE_FILE]
            [-n EXPORT_FOLDER_NAME] [-v] [-a] [--no_search_youtube]
+           [--num_threads NUM_THREADS]
            [main_argument]
 
 Convert spotify/deezer/text albums/playlists to youtube urls or audio/video
@@ -93,6 +94,10 @@ optional arguments:
   --no_search_youtube   Doesn't search youtube urls. Use it with the
                         -su/-du/-sf/-df flags if you want to export only the
                         track names from the albums/playlists.
+  --num_threads NUM_THREADS
+                        Number of threads to use to download the audio/video
+                        files (Default: 4, only effective if the -a/-v flags
+                        are set).
 ```
 
 ### Examples

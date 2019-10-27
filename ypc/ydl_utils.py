@@ -21,7 +21,9 @@ class YdlDownloadThread(Thread):
             total=self.rows.shape[0],
             position=self.num,
         ):
-            logger.debug("Thread %s : Downloading %s.", self.num, row["url"])
+            logger.debug(
+                "Thread %s : Downloading %s - %s.", self.num, index, row["url"]
+            )
             try:
                 self.ydl_download(row["url"])
             except Exception as e:
