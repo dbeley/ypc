@@ -14,14 +14,15 @@ def test_get_youtube_url():
 
 
 def test_get_ydl_dict():
-    if not isinstance(ydl_utils.get_ydl_dict(SEARCH_TERM, 1), dict):
+    info_dict = ydl_utils.get_ydl_dict(SEARCH_TERM, 1)
+    if not isinstance(info_dict, dict):
+        raise AssertionError()
+
+    if not ydl_utils.dict_is_song(info_dict):
         raise AssertionError()
 
 
 def test_dict_is_song():
-    if not ydl_utils.dict_is_song(ydl_utils.get_ydl_dict(SEARCH_TERM, 1)):
-        raise AssertionError()
-
     if ydl_utils.dict_is_song(ydl_utils.get_ydl_dict(SEARCH_TERM_IS_ALBUM, 1)):
         raise AssertionError()
 
