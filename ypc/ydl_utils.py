@@ -61,33 +61,44 @@ class YdlDownloadThread(Thread):
             logger.warning("Url invalid : %s. Skipping.", url)
 
 
-def ydl_get_url(search_term, position):
+def dict_is_song(info_dict):
+    """ Determine if a dictionary returned by youtube_dl is from a song (and not an album for example). """
+    if "full album" in info_dict["title"].lower():
+        return False
+    if int(info_dict["duration"]) > 7200:
+        return False
+    return True
+
+
+def get_ydl_dict(search_term, position):
     ydl_opts = {"logger": MyLogger()}
     with YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(
             f"ytsearch{position}:{search_term}", download=False
         )
-    return info_dict["entries"][position - 1]["webpage_url"]
+    return info_dict["entries"][position - 1]
 
 
-def get_youtube_url(search):
+def get_youtube_url(search_term):
+    """ Extract an url for a song. """
     position = 1
     while True:
         try:
-            url = ydl_get_url(search, position)
-            break
+            info_dict = get_ydl_dict(search_term, position)
+            if dict_is_song(info_dict):
+                break
         except Exception as e:
             logger.error(
-                "Error extracting url for search %s, position %s : %s.",
-                search,
+                "Error extracting youtube search %s, position %s : %s.",
+                search_term,
                 position,
                 e,
             )
-            if position > 3:
-                url = None
-                break
+            if position > 4:
+                # Too many wrong results
+                return None
         position += 1
-    return url
+    return info_dict["webpage_url"]
 
 
 class MyLogger(object):  # pragma: no cover
