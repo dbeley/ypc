@@ -13,4 +13,4 @@ ypc = {editable = true,path = "."}
 twine = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
