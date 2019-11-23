@@ -28,5 +28,6 @@ setuptools.setup(
         "youtube-dl",
         "lxml",
         "tqdm",
+        "itunespy",
     ],
 )

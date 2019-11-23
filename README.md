@@ -14,6 +14,7 @@ If you want to extract spotify albums/playlists, you need to set up a valid conf
 
 ## Requirements
 
+- ffmpeg
 - requests
 - spotipy
 - pandas
@@ -21,6 +22,7 @@ If you want to extract spotify albums/playlists, you need to set up a valid conf
 - youtube-dl
 - lxml
 - tqdm
+- itunespy
 
 ## Installation
 

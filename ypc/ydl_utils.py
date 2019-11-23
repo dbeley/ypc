@@ -2,6 +2,7 @@ from threading import Thread
 import logging
 from youtube_dl import YoutubeDL
 from tqdm import tqdm
+from ypc.tag_utils import get_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class YdlDownloadThread(Thread):
                 "Thread %s : Downloading %s - %s.", self.num, index, row["url"]
             )
             try:
-                self.ydl_download(row["url"])
+                self.ydl_download(row)
             except Exception as e:
                 logger.error(
                     "Error downloading %s in thread %s : %s.",
@@ -34,31 +35,56 @@ class YdlDownloadThread(Thread):
                     e,
                 )
 
-    def ydl_download(self, url):  # pragma: no cover
-        if url:
+    def ydl_download(self, row):  # pragma: no cover
+        ydl_opts_base = {
+            "logger": MyLogger(),
+            "outtmpl": "%(title)s.%(ext)s",
+            "prefer_ffmpeg": True,
+            "download_archive": "ydl_progress.txt",
+        }
+        if not row.empty:
+            metadata = None
+            if "title" in row:
+                metadata = get_metadata(row["title"])
             if self.only_audio:
                 ydl_opts = {
+                    **ydl_opts_base,
+                    "writethumbnail": True,
                     "format": "bestaudio/best",
                     "postprocessors": [
                         {
                             "key": "FFmpegExtractAudio",
                             "preferredcodec": "mp3",
                             "preferredquality": "256",
-                        }
+                        },
+                        {"key": "EmbedThumbnail"},
                     ],
-                    "logger": MyLogger(),
-                    "outtmpl": "%(title)s.%(ext)s",
+                    "postprocessor_args": ["-metadata", "album=daft punk"],
                 }
+                if metadata:
+                    ydl_opts = {
+                        **ydl_opts,
+                        "postprocessor_args": [
+                            "-metadata",
+                            f"artist={metadata.artist_name}",
+                            "-metadata",
+                            f"title={metadata.track_name}",
+                            "-metadata",
+                            f"genre={metadata.primary_genre_name}",
+                        ],
+                    }
             else:
                 ydl_opts = {
+                    **ydl_opts_base,
                     "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
-                    "logger": MyLogger(),
-                    "outtmpl": "%(title)s.%(ext)s",
+                    # Would need to recode in mp4 or m4a. Useless for now.
+                    # "writethumbnail": True,
+                    # "postprocessors": [{"key": "EmbedThumbnail"}],
                 }
             with YoutubeDL(ydl_opts) as ydl:
-                ydl.extract_info(url, download=True)
+                ydl.extract_info(row["url"], download=True)
         else:
-            logger.warning("Url invalid : %s. Skipping.", url)
+            logger.warning("Url invalid : %s. Skipping.", row["url"])
 
 
 def dict_is_song(info_dict):

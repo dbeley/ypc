@@ -247,14 +247,14 @@ def main():  # pragma: no cover
     #     # Transform df containing youtube urls to be compatible with ydl_download function
     #     df.columns = ["url"]
 
-    if args.download_video or args.download_audio:
-        if args.download_video:
-            only_audio = False
-            export_folder += "/Video"
-        else:
-            only_audio = True
-            export_folder += "/Audio"
-        thread_download(df, args.num_threads, only_audio, export_folder)
+    if args.download_audio:
+        only_audio = True
+        export_folder_audio = export_folder + "/Audio"
+        thread_download(df, args.num_threads, only_audio, export_folder_audio)
+    if args.download_video:
+        only_audio = False
+        export_folder_video = export_folder + "/Video"
+        thread_download(df, args.num_threads, only_audio, export_folder_video)
 
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
