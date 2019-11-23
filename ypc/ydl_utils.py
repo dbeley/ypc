@@ -59,7 +59,6 @@ class YdlDownloadThread(Thread):
                         },
                         {"key": "EmbedThumbnail"},
                     ],
-                    "postprocessor_args": ["-metadata", "album=daft punk"],
                 }
                 if metadata:
                     ydl_opts = {
