@@ -72,5 +72,5 @@ def get_deezer_songs(terms):
             logger.error(
                 "%s not supported. Please retry with another search.", item
             )
-            exit()
+            raise SystemExit
     return df

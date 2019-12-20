@@ -52,7 +52,7 @@ def get_spotipy():  # pragma: no cover
                 logger.info(
                     "A sample configuration file has been created at ~/.config/ypc/config.ini. Go to https://developer.spotify.com/dashboard/login to create your own spotify application."
                 )
-            exit()
+            raise SystemExit
 
         # Spotify API
         client_credentials_manager = SpotifyClientCredentials(
@@ -132,5 +132,5 @@ def get_spotify_songs(terms):
             logger.error(
                 "%s not supported. Please retry with another search.", item
             )
-            exit()
+            raise SystemExit
     return df

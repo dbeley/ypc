@@ -40,7 +40,7 @@ class YdlDownloadThread(Thread):
             "logger": MyLogger(),
             "outtmpl": "%(title)s.%(ext)s",
             "prefer_ffmpeg": True,
-            "download_archive": "ydl_progress.txt",
+            "download_archive": "ypc_progress.txt",
         }
         if not row.empty:
             metadata = None

@@ -27,7 +27,7 @@ def extract_terms_from_arg(arg):
 
 def main_argument_is_youtube(argument):
     """ True if main_argument is a youtube file."""
-    if os.path.isfile(argument):
+    if Path(argument).is_file():
         argument_file_content = open(argument).read()
         return (
             "youtu" in argument_file_content
@@ -41,7 +41,7 @@ def parse_main_argument(argument, export_folder):
     """Function parsing the main_argument argument.
     Returns a dataframe containing the search terms (or the urls if main_argument is a youtube file."""
     # File or string
-    if os.path.isfile(argument):
+    if Path(argument).is_file():
         is_file = True
         argument_file_content = open(argument).read()
         # File of urls or search terms
@@ -172,10 +172,7 @@ def main():  # pragma: no cover
     args = parse_args()
 
     # Export folder
-    if args.export_folder_name:
-        export_folder = args.export_folder_name
-    else:
-        export_folder = "ypc_exports"
+    export_folder = args.export_folder_name
     logger.info("Export folder : %s.", export_folder)
     Path(export_folder).mkdir(parents=True, exist_ok=True)
 
@@ -201,7 +198,7 @@ def main():  # pragma: no cover
         ]
     ):
         logger.error("No input. Use the -h flag to see help. Exiting.")
-        exit()
+        raise SystemExit()
     # Parse other arguments
     else:
         df = parse_arguments(args, export_folder)
@@ -212,24 +209,51 @@ def main():  # pragma: no cover
             "No download options selected, but the files containing the tracklist and the extracted youtube urls will still be exported. Use the flags -a to download audio, -v to download video."
         )
 
+    # Special mode (flag --no_search_youtube) where the tracklist is exported and no downloads are made (useful to export spotify/deezer playlists as text)
     if args.no_search_youtube:
-        logger.info("no_search_youtube mode. Exiting.")
+        logger.info(
+            "no_search_youtube mode. Writing tracklist.csv and exiting."
+        )
         df.to_csv(
             export_folder + "/tracklist.csv",
             index=False,
             sep="\t",
             header=True,
         )
-        exit()
+        raise SystemExit
+
+    df_previous = None
+    # Check if the export folder already contains tracklist.csv from a previous export.
+    if Path(export_folder + "/tracklist.csv").is_file():
+        logger.info("Detected previous export. Loading file tracklist.txt.")
+        df_previous = pd.read_csv(export_folder + "/tracklist.csv", sep="\t",)
+        logger.debug(df_previous)
 
     # Extract youtube urls except if df already contains youtube urls.
     if not is_youtube and not args.youtube_file:
         logger.info("Extracting youtube urls.")
         list_urls = []
+        # loop through the df, search youtube urls for each row
         for _, x in tqdm(df.iterrows(), dynamic_ncols=True, total=df.shape[0]):
-            list_urls.append(get_youtube_url(x["title"]))
+            # if x["title"] is in df_previous, no need to search on youtube
+            if (
+                df_previous is not None
+                and x["title"] in df_previous["title"].values
+            ):
+                url = (
+                    df_previous[df_previous["title"] == x["title"]]["url"]
+                    .to_string(index=False, header=False)
+                    .strip()
+                )
+                logger.debug(
+                    "url already in tracklist.csv for %s : %s.",
+                    x["title"],
+                    url,
+                )
+                list_urls.append(url)
+            else:
+                list_urls.append(get_youtube_url(x["title"]))
 
-        logger.info("Exporting urls list.")
         with open(
             export_folder + "/urls_list.csv", "w", encoding="utf-8"
         ) as f:
@@ -318,6 +342,7 @@ def parse_args():  # pragma: no cover
         "--export_folder_name",
         type=str,
         help="Name of the export. Used to name the exports folder.",
+        default="ypc_exports",
     )
     parser.add_argument(
         "-v",
