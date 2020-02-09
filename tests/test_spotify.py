@@ -11,15 +11,13 @@ SPOTIFY_ALBUM_URL = "https://open.spotify.com/album/4FCoFSNIFhK36holxHWCnc"
 
 def test_get_spotify_playlist_tracks(sp):
     if not isinstance(
-        spotify_utils.get_spotify_playlist_tracks(
-            sp, None, SPOTIFY_PLAYLIST_URL
-        ),
+        spotify_utils.get_spotify_playlist_tracks(sp, SPOTIFY_PLAYLIST_URL),
         pd.DataFrame,
     ):
         raise AssertionError()
     with pytest.raises(Exception):
-        spotify_utils.get_spotify_playlist_tracks(sp, None, SPOTIFY_ALBUM_URL)
-        spotify_utils.get_spotify_playlist_tracks(sp, None, SPOTIFY_FILE)
+        spotify_utils.get_spotify_playlist_tracks(sp, SPOTIFY_ALBUM_URL)
+        spotify_utils.get_spotify_playlist_tracks(sp, SPOTIFY_FILE)
 
 
 def test_get_spotify_album_tracks(sp):

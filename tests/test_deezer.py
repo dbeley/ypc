@@ -8,10 +8,8 @@ DEEZER_ALBUM_URL = "https://www.deezer.com/fr/album/95467"
 
 
 def test_get_deezer_playlist_tracks():
-    if not isinstance(
-        deezer_utils.get_deezer_playlist_tracks(DEEZER_PLAYLIST_URL),
-        pd.DataFrame,
-    ):
+    playlist_df = deezer_utils.get_deezer_playlist_tracks(DEEZER_PLAYLIST_URL)
+    if not isinstance(playlist_df, pd.DataFrame):
         raise AssertionError()
 
     with pytest.raises(Exception):

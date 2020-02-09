@@ -64,9 +64,9 @@ def get_spotipy():  # pragma: no cover
         return sp
 
 
-def get_spotify_playlist_tracks(sp, username, playlist_id):
+def get_spotify_playlist_tracks(sp, playlist_id):
     df = pd.DataFrame()
-    results = sp.user_playlist_tracks(username, playlist_id)
+    results = sp.playlist_tracks(playlist_id)
     tracks = results["items"]
     while results["next"]:
         results = sp.next(results)
@@ -120,12 +120,7 @@ def get_spotify_songs(terms):
         # item is playlist
         elif "playlist" in item:
             df = pd.concat(
-                [
-                    df,
-                    get_spotify_playlist_tracks(
-                        sp, username=None, playlist_id=item
-                    ),
-                ],
+                [df, get_spotify_playlist_tracks(sp, playlist_id=item),],
                 sort=False,
             )
         else:
