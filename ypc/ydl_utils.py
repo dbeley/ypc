@@ -68,8 +68,6 @@ class YdlDownloadThread(Thread):
                             f"artist={metadata.artist_name}",
                             "-metadata",
                             f"title={metadata.track_name}",
-                            "-metadata",
-                            f"genre={metadata.primary_genre_name}",
                         ],
                     }
             else:

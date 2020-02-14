@@ -335,7 +335,7 @@ def parse_args():  # pragma: no cover
         "-yf",
         "--youtube_file",
         type=str,
-        help="File containing youtube urls (one by line). The file url_list_simple.csv exported by ypc is a good candidate.",
+        help="File containing youtube urls (one by line). The file urls_list.csv exported by ypc is a good candidate.",
     )
     parser.add_argument(
         "-n",
