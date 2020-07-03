@@ -29,9 +29,8 @@ def main_argument_is_youtube(argument):
     """ True if main_argument is a youtube file."""
     if Path(argument).is_file():
         argument_file_content = open(argument).read()
-        return (
-            "youtu" in argument_file_content
-            and argument_file_content.startswith("http")
+        return "youtu" in argument_file_content and argument_file_content.startswith(
+            "http"
         )
     else:
         return False
@@ -67,9 +66,7 @@ def parse_main_argument(argument, export_folder):
         if is_file:
             terms = extract_terms_from_file(argument)
             df = get_spotify_songs(terms)
-            logger.info(
-                "Reading file containing spotify urls at %s.", argument
-            )
+            logger.info("Reading file containing spotify urls at %s.", argument)
         else:
             terms = extract_terms_from_arg(argument)
             df = get_spotify_songs(terms)
@@ -86,15 +83,11 @@ def parse_main_argument(argument, export_folder):
     elif is_youtube:
         if is_file:
             df = pd.read_csv(argument, sep="\t", header=None, names=["url"])
-            logger.info(
-                "Reading file containing youtube urls at %s.", argument
-            )
+            logger.info("Reading file containing youtube urls at %s.", argument)
     else:
         if is_file:
             df = pd.read_csv(argument, sep="\t", header=None, names=["title"])
-            logger.info(
-                "Reading file containing search terms at %s.", argument
-            )
+            logger.info("Reading file containing search terms at %s.", argument)
         else:
             df = pd.DataFrame(
                 [x.strip() for x in argument.split(",")], columns=["title"]
@@ -112,9 +105,7 @@ def parse_arguments(args, export_folder):
     elif args.spotify_file:
         terms = extract_terms_from_file(args.spotify_file)
         df = get_spotify_songs(terms)
-        logger.info(
-            "Reading file containing spotify urls at %s.", args.spotify_file
-        )
+        logger.info("Reading file containing spotify urls at %s.", args.spotify_file)
     elif args.deezer_url:
         terms = extract_terms_from_arg(args.deezer_url)
         df = get_deezer_songs(terms)
@@ -122,23 +113,13 @@ def parse_arguments(args, export_folder):
     elif args.deezer_file:
         terms = extract_terms_from_file(args.deezer_file)
         df = get_deezer_songs(terms)
-        logger.info(
-            "Reading file containing deezer urls at %s.", args.deezer_file
-        )
+        logger.info("Reading file containing deezer urls at %s.", args.deezer_file)
     elif args.youtube_file:
-        df = pd.read_csv(
-            args.youtube_file, sep="\t", header=None, names=["url"]
-        )
-        logger.info(
-            "Reading file containing youtube urls at %s.", args.youtube_file
-        )
+        df = pd.read_csv(args.youtube_file, sep="\t", header=None, names=["url"])
+        logger.info("Reading file containing youtube urls at %s.", args.youtube_file)
     elif args.file_name:
-        df = pd.read_csv(
-            args.file_name, sep="\t", header=None, names=["title"]
-        )
-        logger.info(
-            "Reading file containing search terms at %s.", args.file_name
-        )
+        df = pd.read_csv(args.file_name, sep="\t", header=None, names=["title"])
+        logger.info("Reading file containing search terms at %s.", args.file_name)
     return df
 
 
@@ -182,9 +163,7 @@ def main():  # pragma: no cover
         df = parse_main_argument(args.main_argument, export_folder)
         is_youtube = main_argument_is_youtube(args.main_argument)
         logger.debug(
-            "main_argument : %s, is_youtube : %s.",
-            args.main_argument,
-            is_youtube,
+            "main_argument : %s, is_youtube : %s.", args.main_argument, is_youtube,
         )
     # Verify other arguments
     elif not any(
@@ -211,14 +190,9 @@ def main():  # pragma: no cover
 
     # Special mode (flag --no_search_youtube) where the tracklist is exported and no downloads are made (useful to export spotify/deezer playlists as text)
     if args.no_search_youtube:
-        logger.info(
-            "no_search_youtube mode. Writing tracklist.csv and exiting."
-        )
+        logger.info("no_search_youtube mode. Writing tracklist.csv and exiting.")
         df.to_csv(
-            export_folder + "/tracklist.csv",
-            index=False,
-            sep="\t",
-            header=True,
+            export_folder + "/tracklist.csv", index=False, sep="\t", header=True,
         )
         raise SystemExit
 
@@ -236,36 +210,26 @@ def main():  # pragma: no cover
         # loop through the df, search youtube urls for each row
         for _, x in tqdm(df.iterrows(), dynamic_ncols=True, total=df.shape[0]):
             # if x["title"] is in df_previous, no need to search on youtube
-            if (
-                df_previous is not None
-                and x["title"] in df_previous["title"].values
-            ):
+            if df_previous is not None and x["title"] in df_previous["title"].values:
                 url = (
                     df_previous[df_previous["title"] == x["title"]]["url"]
                     .to_string(index=False, header=False)
                     .strip()
                 )
                 logger.debug(
-                    "url already in tracklist.csv for %s : %s.",
-                    x["title"],
-                    url,
+                    "url already in tracklist.csv for %s : %s.", x["title"], url,
                 )
                 list_urls.append(url)
             else:
                 list_urls.append(get_youtube_url(x["title"]))
 
-        with open(
-            export_folder + "/urls_list.csv", "w", encoding="utf-8"
-        ) as f:
+        with open(export_folder + "/urls_list.csv", "w", encoding="utf-8") as f:
             for i in list_urls:
                 f.write(f"{i}\n")
 
         df["url"] = pd.Series(list_urls).values
         df.to_csv(
-            export_folder + "/tracklist.csv",
-            index=False,
-            sep="\t",
-            header=True,
+            export_folder + "/tracklist.csv", index=False, sep="\t", header=True,
         )
     # else:
     #     # Transform df containing youtube urls to be compatible with ydl_download function
