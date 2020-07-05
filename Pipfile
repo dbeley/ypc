@@ -9,7 +9,7 @@ twine = "*"
 
 [packages]
 e1839a8 = {editable = true,path = "."}
-ypc = {editable = true,path = "."}
+ypc = {editable = true, path = "."}
 twine = "*"
 itunespy = "*"
 
