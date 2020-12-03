@@ -9,9 +9,9 @@ twine = "*"
 
 [packages]
 e1839a8 = {editable = true,path = "."}
-ypc = {editable = true, path = "."}
+ypc = {editable = true,path = "."}
 twine = "*"
 itunespy = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.8"
