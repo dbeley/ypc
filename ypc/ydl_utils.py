@@ -29,7 +29,10 @@ class YdlDownloadThread(Thread):
                 self.ydl_download(row)
             except Exception as e:
                 logger.error(
-                    "Error downloading %s in thread %s : %s.", row["url"], self.num, e,
+                    "Error downloading %s in thread %s : %s.",
+                    row["url"],
+                    self.num,
+                    e,
                 )
 
     def ydl_download(self, row):  # pragma: no cover

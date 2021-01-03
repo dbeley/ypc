@@ -35,19 +35,13 @@ def get_spotipy():  # pragma: no cover
                 e,
             )
             if not os.path.exists(user_config_dir):
-                logger.info(
-                    "Configuration folder not found. Creating ~/.config/ypc/."
-                )
+                logger.info("Configuration folder not found. Creating ~/.config/ypc/.")
                 os.makedirs(user_config_dir)
             if not os.path.isfile(user_config_dir + "config.ini"):
                 sample_config = (
-                    "[spotify]\n"
-                    "id=spotify_id_here\n"
-                    "secret=spotify_secret_here\n"
+                    "[spotify]\n" "id=spotify_id_here\n" "secret=spotify_secret_here\n"
                 )
-                with open(
-                    user_config_dir + "config.ini", "w", encoding="utf-8"
-                ) as f:
+                with open(user_config_dir + "config.ini", "w", encoding="utf-8") as f:
                     f.write(sample_config)
                 logger.info(
                     "A sample configuration file has been created at ~/.config/ypc/config.ini. Go to https://developer.spotify.com/dashboard/login to create your own spotify application."
@@ -58,15 +52,13 @@ def get_spotipy():  # pragma: no cover
         client_credentials_manager = SpotifyClientCredentials(
             client_id=spotify_id, client_secret=secret
         )
-        sp = spotipy.Spotify(
-            client_credentials_manager=client_credentials_manager
-        )
+        sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
         return sp
 
 
 def get_spotify_playlist_tracks(sp, playlist_id):
     df = pd.DataFrame()
-    results = sp.playlist_tracks(playlist_id)
+    results = sp.playlist_items(playlist_id, additional_types=("track",))
     tracks = results["items"]
     while results["next"]:
         results = sp.next(results)
@@ -120,12 +112,13 @@ def get_spotify_songs(terms):
         # item is playlist
         elif "playlist" in item:
             df = pd.concat(
-                [df, get_spotify_playlist_tracks(sp, playlist_id=item),],
+                [
+                    df,
+                    get_spotify_playlist_tracks(sp, playlist_id=item),
+                ],
                 sort=False,
             )
         else:
-            logger.error(
-                "%s not supported. Please retry with another search.", item
-            )
+            logger.error("%s not supported. Please retry with another search.", item)
             raise SystemExit
     return df
