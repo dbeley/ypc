@@ -1,7 +1,7 @@
 # ypc : youtube_playlist_converter
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8007d6fb15334ef485aadd64e133aa97)](https://app.codacy.com/app/dbeley/ypc?utm_source=github.com&utm_medium=referral&utm_content=dbeley/ypc&utm_campaign=Badge_Grade_Dashboard)
-[![Build Status](https://travis-ci.com/dbeley/ypc.svg?branch=master)](https://travis-ci.com/dbeley/ypc)
+![Build Status](https://github.com/dbeley/ypc/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/dbeley/ypc/branch/master/graph/badge.svg)](https://codecov.io/gh/dbeley/ypc)
 
 This python utility allows the conversion of spotify/deezer/text albums/playlists to youtube urls and/or audio/video files.
