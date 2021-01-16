@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_spotipy():  # pragma: no cover
-    # test if in Travis-CI
+    # test if running in CI
     if ("TRAVIS" in os.environ and os.environ["TRAVIS"] == "true") or (
         "SPOTIFY_CLIENT_ID" in os.environ and "SPOTIFY_CLIENT_SECRET" in os.environ
     ):

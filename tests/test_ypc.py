@@ -11,9 +11,7 @@ SEARCH_FILE = "tests/test_files/search_terms.txt"
 SEARCH_TERM = "xtc - making plans for nigel"
 SPOTIFY_ALBUM_URL = "https://open.spotify.com/album/4FCoFSNIFhK36holxHWCnc"
 SPOTIFY_FILE = "tests/test_files/spotify_urls.txt"
-SPOTIFY_PLAYLIST_URL = (
-    "https://open.spotify.com/playlist/37i9dQZF1DX2sUQwD7tbmL"
-)
+SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/37i9dQZF1DX2sUQwD7tbmL"
 YOUTUBE_FILE = "tests/test_files/youtube_urls.txt"
 YOUTUBE_URL = "https://www.youtube.com/watch?v=WfKhVV-7lxI"
 
@@ -109,17 +107,13 @@ def test_parse_argument():
         youtube_file="https://youtube.com",
         file_name=None,
     )
-    if not isinstance(
-        ypc.parse_arguments(args_search, "ypc_export"), pd.DataFrame
-    ):
+    if not isinstance(ypc.parse_arguments(args_search, "ypc_export"), pd.DataFrame):
         raise AssertionError()
     if not isinstance(
         ypc.parse_arguments(args_deezer_file, "ypc_export"), pd.DataFrame
     ):
         raise AssertionError()
-    if not isinstance(
-        ypc.parse_arguments(args_deezer_url, "ypc_export"), pd.DataFrame
-    ):
+    if not isinstance(ypc.parse_arguments(args_deezer_url, "ypc_export"), pd.DataFrame):
         raise AssertionError()
     if not isinstance(
         ypc.parse_arguments(args_spotify_file, "ypc_export"), pd.DataFrame
@@ -129,9 +123,7 @@ def test_parse_argument():
         ypc.parse_arguments(args_spotify_url, "ypc_export"), pd.DataFrame
     ):
         raise AssertionError()
-    if not isinstance(
-        ypc.parse_arguments(args_youtube, "ypc_export"), pd.DataFrame
-    ):
+    if not isinstance(ypc.parse_arguments(args_youtube, "ypc_export"), pd.DataFrame):
         raise AssertionError()
 
     with pytest.raises(Exception):
@@ -144,22 +136,16 @@ def test_parse_main_argument():
         ypc.parse_main_argument(DEEZER_ALBUM_URL, "ypc_export"), pd.DataFrame
     ):
         raise AssertionError()
-    if not isinstance(
-        ypc.parse_main_argument(DEEZER_FILE, "ypc_export"), pd.DataFrame
-    ):
+    if not isinstance(ypc.parse_main_argument(DEEZER_FILE, "ypc_export"), pd.DataFrame):
         raise AssertionError()
     if not isinstance(
         ypc.parse_main_argument(DEEZER_PLAYLIST_URL, "ypc_export"),
         pd.DataFrame,
     ):
         raise AssertionError()
-    if not isinstance(
-        ypc.parse_main_argument(SEARCH_FILE, "ypc_export"), pd.DataFrame
-    ):
+    if not isinstance(ypc.parse_main_argument(SEARCH_FILE, "ypc_export"), pd.DataFrame):
         raise AssertionError()
-    if not isinstance(
-        ypc.parse_main_argument(SEARCH_TERM, "ypc_export"), pd.DataFrame
-    ):
+    if not isinstance(ypc.parse_main_argument(SEARCH_TERM, "ypc_export"), pd.DataFrame):
         raise AssertionError()
     if not isinstance(
         ypc.parse_main_argument(SPOTIFY_ALBUM_URL, "ypc_export"), pd.DataFrame
@@ -178,15 +164,14 @@ def test_parse_main_argument():
         ypc.parse_main_argument(YOUTUBE_FILE, "ypc_export"), pd.DataFrame
     ):
         raise AssertionError()
-    if not isinstance(
-        ypc.parse_main_argument(YOUTUBE_URL, "ypc_export"), pd.DataFrame
-    ):
+    if not isinstance(ypc.parse_main_argument(YOUTUBE_URL, "ypc_export"), pd.DataFrame):
         raise AssertionError()
 
 
 @pytest.mark.skipif(
-    "TRAVIS" in os.environ and os.environ["TRAVIS"] == "true",
-    reason="doesn't work with Travis",
+    ("TRAVIS" in os.environ and os.environ["TRAVIS"] == "true")
+    or ("SPOTIFY_CLIENT_ID" in os.environ and "SPOTIFY_CLIENT_SECRET" in os.environ),
+    reason="doesn't work with CI",
 )
 def test_parse_args():
     if not isinstance(ypc.parse_args(), argparse.Namespace):
