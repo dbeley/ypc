@@ -11,5 +11,4 @@ geckodriver.log
 tags
 build/
 ypc_exports/
-*.txt
 *.sh
