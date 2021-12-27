@@ -24,7 +24,6 @@ setuptools.setup(
         "requests",
         "spotipy",
         "pandas",
-        "numpy",
         "beautifulsoup4",
         "yt-dlp",
         "lxml",
