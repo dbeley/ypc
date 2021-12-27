@@ -14,6 +14,7 @@ If you want to extract spotify albums/playlists, you need to set up a valid conf
 
 ## Requirements
 
+- Python >=3.8
 - ffmpeg
 - requests
 - spotipy
