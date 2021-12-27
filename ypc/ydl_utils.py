@@ -1,6 +1,6 @@
 from threading import Thread
 import logging
-from youtube_dl import YoutubeDL
+from yt_dlp import YoutubeDL
 from tqdm import tqdm
 from ypc.tag_utils import get_metadata
 
@@ -85,7 +85,7 @@ class YdlDownloadThread(Thread):
 
 
 def dict_is_song(info_dict):
-    """ Determine if a dictionary returned by youtube_dl is from a song (and not an album for example). """
+    """Determine if a dictionary returned by youtube_dl is from a song (and not an album for example)."""
     if "full album" in info_dict["title"].lower():
         return False
     if int(info_dict["duration"]) > 7200:
@@ -103,7 +103,7 @@ def get_ydl_dict(search_term, position):
 
 
 def get_youtube_url(search_term):
-    """ Extract an url for a song. """
+    """Extract an url for a song."""
     position = 1
     while True:
         try:

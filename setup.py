@@ -25,7 +25,7 @@ setuptools.setup(
         "spotipy",
         "pandas",
         "beautifulsoup4",
-        "youtube-dl",
+        "yt-dlp",
         "lxml",
         "tqdm",
         "itunespy",

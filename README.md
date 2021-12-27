@@ -6,7 +6,7 @@
 
 This python utility allows the conversion of spotify/deezer/text albums/playlists to youtube urls and/or audio/video files.
 
-It supports spotify and deezer urls (album and playlist), as well as a list of terms to search (see below for some examples). 
+It supports spotify and deezer urls (album and playlist), as well as a list of terms to search (see below for some examples).
 
 It also supports files containing several of the compatible search terms (one by line). Unfortunately, the mix of several types is not supported at this moment (spotify and deezer urls in the same file for example).
 
@@ -19,7 +19,7 @@ If you want to extract spotify albums/playlists, you need to set up a valid conf
 - spotipy
 - pandas
 - beautifulsoup4
-- youtube-dl
+- yt-dlp
 - lxml
 - tqdm
 - itunespy
